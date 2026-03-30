@@ -11,3 +11,12 @@
 # Sugestão automática de /compact
 
 Se a sessão tiver mais de 20 trocas ou o contexto estiver acima de 50%, sugira ao usuário rodar /compact.
+
+# Cost and context rules
+
+- Prefer /compact over resuming large sessions.
+- Avoid --resume for high-cost sessions unless necessary.
+- Use /cost before and after long tasks.
+- Suggest /compact when the session gets long.
+- Use computer-use only for GUI-only workflows.
+- Prefer Bash, MCP, or Chrome before computer-use.
