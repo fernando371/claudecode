@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/home/user/claudecode/.claude/hooks/post-edit.sh"
+            "command": ".claude/hooks/post-edit.sh"
           }
         ]
       }

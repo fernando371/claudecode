@@ -6,7 +6,7 @@
 - Opção mais simples primeiro
 - Referenciar arquivos específicos nos prompts
 - Use /compact em sessões longas, /clear ao mudar de assunto
-- Monitore consumo com /cost
+- Monitore consumo com /stats ou /cost
 
 # Sugestão automática de /compact
 
