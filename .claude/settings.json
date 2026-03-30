@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/user/claudecode/.claude/hooks/post-edit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
