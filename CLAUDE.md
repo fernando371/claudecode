@@ -8,6 +8,11 @@
 - Use /compact em sessões longas, /clear ao mudar de assunto
 - Monitore consumo com /stats ou /cost
 
-# Sugestão automática de /compact
+# Controle de custo
 
-Se a sessão tiver mais de 20 trocas ou o contexto estiver acima de 50%, sugira ao usuário rodar /compact.
+- Rode `/cost` antes e depois de tarefas longas.
+- Use `/compact` quando contexto > 50% ou antes de mudar de subtarefa.
+- Nunca use `--resume` se a sessão anterior era sobre assunto diferente — inicie nova sessão.
+- Se contexto > 70%, pare e compacte antes de continuar.
+- Prefira Bash e MCP a computer-use (computer-use custa mais e é mais lento).
+- Sugira `/compact` ao usuário após 20 trocas ou se o custo acumulado parecer alto.
