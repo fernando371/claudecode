@@ -13,8 +13,11 @@ case "$EXT" in
   py)
     python3 -m py_compile "$FILE" 2>&1 && echo "[OK] $FILE sem erros de sintaxe" || echo "[ERRO] $FILE falhou na verificação"
     ;;
-  js|ts)
+  js)
     node --check "$FILE" 2>&1 && echo "[OK] $FILE sem erros de sintaxe" || echo "[ERRO] $FILE falhou na verificação"
+    ;;
+  ts)
+    echo "[INFO] .ts requer tsc — verificação de sintaxe ignorada"
     ;;
   sh)
     bash -n "$FILE" 2>&1 && echo "[OK] $FILE sem erros de sintaxe" || echo "[ERRO] $FILE falhou na verificação"
