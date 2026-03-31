@@ -1,3 +1,8 @@
+# Contexto persistente
+
+Leia `.claude/project-context.md` no início de cada sessão para recuperar decisões e convenções acumuladas.
+Atualize esse arquivo ao fim de sessões que produzam decisões relevantes.
+
 # Regras de sessão
 
 - Respostas curtas e diretas
