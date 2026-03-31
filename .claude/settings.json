@@ -8,6 +8,10 @@
       {
         "matcher": "Agent|Bash|Glob",
         "hooks": [{ "type": "command", "command": ".claude/hooks/pre-tool-cost-warn.sh" }]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/pre-tool-workspace-guard.sh" }]
       }
     ],
     "PostToolUse": [

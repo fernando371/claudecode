@@ -25,6 +25,9 @@ if usage:
     lines.append(f'- Tokens entrada: {inp} | saída: {out}')
     if cache_read or cache_write:
         lines.append(f'- Cache lido: {cache_read} | criado: {cache_write}')
+    if isinstance(inp, int) and inp > 80000:
+        lines.append(f'- ⚠ Contexto alto ({inp} tokens entrada). Use /compact antes da próxima sessão.')
+
 lines.append('')
 
 print('\n'.join(lines))
