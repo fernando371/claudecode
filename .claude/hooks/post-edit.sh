@@ -16,8 +16,22 @@ case "$EXT" in
   js)
     node --check "$FILE" 2>&1 && echo "[OK] $FILE sem erros de sintaxe" || echo "[ERRO] $FILE falhou na verificação"
     ;;
-  ts)
-    echo "[INFO] .ts requer tsc — verificação de sintaxe ignorada"
+  ts|tsx)
+    # Procura tsconfig subindo até 3 níveis a partir do arquivo
+    DIR=$(dirname "$FILE")
+    TSCONFIG=""
+    for i in 1 2 3; do
+      if [ -f "$DIR/tsconfig.json" ]; then
+        TSCONFIG="$DIR/tsconfig.json"
+        break
+      fi
+      DIR=$(dirname "$DIR")
+    done
+    if [ -n "$TSCONFIG" ]; then
+      tsc --noEmit -p "$TSCONFIG" 2>&1 | head -20 && echo "[OK] $FILE sem erros de tipo" || echo "[ERRO] $FILE falhou na verificação de tipos"
+    else
+      echo "[INFO] tsconfig.json não encontrado — verificação de tipo ignorada para $FILE"
+    fi
     ;;
   sh)
     bash -n "$FILE" 2>&1 && echo "[OK] $FILE sem erros de sintaxe" || echo "[ERRO] $FILE falhou na verificação"

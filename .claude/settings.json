@@ -21,12 +21,11 @@
     "PostToolUse": [
       {
         "matcher": "Edit|Write|NotebookEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": ".claude/hooks/post-edit.sh"
-          }
-        ]
+        "hooks": [{ "type": "command", "command": ".claude/hooks/post-edit.sh" }]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/post-bash-log.sh" }]
       }
     ],
     "Stop": [
