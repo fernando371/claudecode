@@ -12,6 +12,10 @@
       {
         "matcher": "Edit|Write|NotebookEdit",
         "hooks": [{ "type": "command", "command": ".claude/hooks/pre-tool-workspace-guard.sh" }]
+      },
+      {
+        "matcher": "mcp__github__push_files|mcp__github__create_or_update_file|mcp__github__delete_file|mcp__github__merge_pull_request",
+        "hooks": [{ "type": "command", "command": ".claude/hooks/pre-tool-github-guard.sh" }]
       }
     ],
     "PostToolUse": [
