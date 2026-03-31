@@ -32,3 +32,41 @@ lines.append('')
 
 print('\n'.join(lines))
 " >> "$LOG" 2>/dev/null || true
+
+# Rotação: arquiva entradas com mais de 30 dias em session-log-archive.md
+ARCHIVE=".claude/session-log-archive.md"
+python3 -c "
+import re, os
+from datetime import datetime, timedelta
+
+log     = '$LOG'
+archive = '$ARCHIVE'
+cutoff  = datetime.now() - timedelta(days=30)
+
+if not os.path.exists(log):
+    raise SystemExit(0)
+
+with open(log) as f:
+    content = f.read()
+
+# Divide em blocos por '## Sessão YYYY-MM-DD'
+blocks = re.split(r'(?=^## Sessão \d{4}-\d{2}-\d{2})', content, flags=re.MULTILINE)
+keep, old = [], []
+
+for block in blocks:
+    m = re.match(r'^## Sessão (\d{4}-\d{2}-\d{2})', block)
+    if m:
+        try:
+            dt = datetime.strptime(m.group(1), '%Y-%m-%d')
+            (old if dt < cutoff else keep).append(block)
+            continue
+        except ValueError:
+            pass
+    keep.append(block)
+
+if old:
+    with open(archive, 'a') as f:
+        f.writelines(old)
+    with open(log, 'w') as f:
+        f.writelines(keep)
+" 2>/dev/null || true
