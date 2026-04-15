@@ -1,4 +1,11 @@
 {
+  "model": "claude-opus-4-6",
+  "effortLevel": "high",
+  "alwaysThinkingEnabled": true,
+  "env": {
+    "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
+    "MAX_THINKING_TOKENS": "31999"
+  },
   "hooks": {
     "PreToolUse": [
       {
