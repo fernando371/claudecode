@@ -2,10 +2,13 @@
   "model": "claude-opus-4-6",
   "effortLevel": "high",
   "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
   "env": {
     "CLAUDE_CODE_EFFORT_LEVEL": "max",
     "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
     "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
     "MAX_THINKING_TOKENS": "31999"
   },
   "hooks": {
