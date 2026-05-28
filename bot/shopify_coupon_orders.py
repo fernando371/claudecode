@@ -19,7 +19,8 @@ SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
 SMTP_USER = os.environ["SMTP_USER"]
 SMTP_PASSWORD = os.environ["SMTP_PASSWORD"]
 EMAIL_FROM = os.environ.get("EMAIL_FROM", SMTP_USER)
-EMAIL_TO = os.environ.get("EMAIL_TO", "comercial@biowellamerica.com.br")
+# Suporta múltiplos destinatários separados por vírgula
+EMAIL_TO = [e.strip() for e in os.environ.get("EMAIL_TO", "comercial@biowellamerica.com.br").split(",") if e.strip()]
 
 # BRT = UTC-3
 BRT = timezone(timedelta(hours=-3))
@@ -239,14 +240,14 @@ def send_email(subject: str, html: str):
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
     msg["From"] = EMAIL_FROM
-    msg["To"] = EMAIL_TO
+    msg["To"] = ", ".join(EMAIL_TO)
     msg.attach(MIMEText(html, "html", "utf-8"))
     with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
         server.ehlo()
         server.starttls()
         server.login(SMTP_USER, SMTP_PASSWORD)
-        server.sendmail(EMAIL_FROM, [EMAIL_TO], msg.as_bytes())
-    print(f"Email enviado para {EMAIL_TO}")
+        server.sendmail(EMAIL_FROM, EMAIL_TO, msg.as_bytes())
+    print(f"Email enviado para {', '.join(EMAIL_TO)}")
 
 
 def main():
