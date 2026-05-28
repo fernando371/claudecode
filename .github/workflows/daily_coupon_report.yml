@@ -1,0 +1,29 @@
+name: Daily Coupon Orders Report
+
+on:
+  schedule:
+    # 08:00 BRT = 11:00 UTC
+    - cron: "0 11 * * *"
+  workflow_dispatch:  # permite rodar manualmente pelo GitHub
+
+jobs:
+  send-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run coupon orders bot
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_TO: "comercial@biowellamerica.com.br"
+        run: python bot/shopify_coupon_orders.py
