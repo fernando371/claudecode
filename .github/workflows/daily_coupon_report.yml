@@ -25,5 +25,5 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
-          EMAIL_TO: "comercial@biowellamerica.com.br,SEGUNDO_EMAIL_AQUI"
+          EMAIL_TO: "comercial@biowellamerica.com.br,fernando@biowellamerica.com.br"
         run: python bot/shopify_coupon_orders.py
