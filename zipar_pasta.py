@@ -6,8 +6,8 @@ import sys
 import zipfile
 
 # Ajuste estes caminhos conforme necessário
-PASTA_ORIGEM = r"C:\CAMINHO\DA\MINHA\PASTA"
-ARQUIVO_ZIP = r"C:\CAMINHO\DO\ARQUIVO\pasta_final.zip"
+PASTA_ORIGEM = r"M:\02 - FDC"
+ARQUIVO_ZIP = r"M:\02 - FDC.zip"
 
 # Arquivos temporários a ignorar (case-insensitive)
 IGNORAR = {"thumbs.db", ".ds_store", "desktop.ini"}
