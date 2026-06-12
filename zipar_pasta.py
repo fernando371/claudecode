@@ -7,7 +7,7 @@ import zipfile
 
 # Ajuste estes caminhos conforme necessário
 PASTA_ORIGEM = r"M:\02 - FDC"
-ARQUIVO_ZIP = r"M:\02 - FDC.zip"
+ARQUIVO_ZIP = r"C:\Users\Fernando\Desktop\FDC TUDO.zip"
 
 # Arquivos temporários a ignorar (case-insensitive)
 IGNORAR = {"thumbs.db", ".ds_store", "desktop.ini"}
