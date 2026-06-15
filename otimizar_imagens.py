@@ -14,6 +14,9 @@ try:
 except ImportError:
     sys.exit("Pillow nao instalado. Rode primeiro:  pip install pillow")
 
+# Libera imagens muito grandes (ex.: expositores em alta) sem alerta de "bomba"
+Image.MAX_IMAGE_PIXELS = None
+
 ORIGEM = r"M:\02 - FDC"
 PASTAS = ["MOKCUPS_FDC", "MATERIAL DIGITAL", "PRODUTOS FDC", "Produtos PT",
           "NEW", "LÂMINAS", "SLIDES NUTRI", "SITE"]
