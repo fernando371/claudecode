@@ -36,6 +36,12 @@ export const ESQUEMAS = {
   consultar_nota_fiscal: z.object({ numeroPedido: z.string().min(3).max(30) }),
   consultar_rastreio: z.object({ codigo: z.string().min(4).max(60) }),
   buscar_conhecimento: z.object({ termo: z.string().min(3).max(160) }),
+  consultar_carrinho_abandonado: z.object({ clienteId: z.string().min(3).max(80) }),
+  consultar_ultimo_pedido: z.object({ clienteId: z.string().min(3).max(80) }),
+  sugerir_combinacao: z.object({
+    skus: z.array(z.string().min(2).max(60)).min(1).max(10),
+    limite: z.number().int().min(1).max(3).optional(),
+  }),
 } as const;
 
 export type NomeFerramenta = keyof typeof ESQUEMAS;
@@ -45,7 +51,12 @@ export const FERRAMENTAS: readonly NomeFerramenta[] = Object.keys(ESQUEMAS) as N
 /** Quais ferramentas cada intencao pode usar. Nada fora disso e permitido. */
 export const FERRAMENTAS_POR_INTENCAO: Record<Intencao, readonly NomeFerramenta[]> = {
   saudacao: [],
-  busca_produto: ['buscar_produto', 'detalhar_produto', 'gerar_link_carrinho'],
+  busca_produto: [
+    'buscar_produto',
+    'detalhar_produto',
+    'sugerir_combinacao',
+    'gerar_link_carrinho',
+  ],
   comparacao_produtos: ['buscar_produto', 'detalhar_produto'],
   preco: ['buscar_produto', 'detalhar_produto', 'gerar_link_carrinho'],
   estoque: ['buscar_produto', 'detalhar_produto'],
@@ -61,8 +72,20 @@ export const FERRAMENTAS_POR_INTENCAO: Record<Intencao, readonly NomeFerramenta[
   produto_avariado: [],
   reacao_adversa: [],
   falar_atendente: [],
-  carrinho_abandonado: ['buscar_produto', 'gerar_link_carrinho'],
-  recompra: ['buscar_produto', 'gerar_link_carrinho'],
+  carrinho_abandonado: [
+    'consultar_carrinho_abandonado',
+    'detalhar_produto',
+    'sugerir_combinacao',
+    'gerar_link_carrinho',
+    'buscar_produto',
+  ],
+  recompra: [
+    'consultar_ultimo_pedido',
+    'detalhar_produto',
+    'sugerir_combinacao',
+    'gerar_link_carrinho',
+    'buscar_produto',
+  ],
   parar_mensagens: [],
   desconhecida: ['buscar_conhecimento'],
 };
@@ -162,6 +185,40 @@ export async function executarFerramenta(
     case 'consultar_rastreio':
       resultado = await a.rastreio.rastrear((dados as { codigo: string }).codigo);
       break;
+    case 'consultar_carrinho_abandonado':
+      resultado = await a.carrinhos.maisRecenteDoCliente(
+        (dados as { clienteId: string }).clienteId,
+      );
+      break;
+    case 'consultar_ultimo_pedido': {
+      // Minimização de dados: devolve só o que a recompra precisa.
+      // Endereço, pagamento, nota fiscal e contato ficam de fora.
+      const r = await a.pedidos.ultimoPedidoDoCliente((dados as { clienteId: string }).clienteId);
+      resultado = r.ok
+        ? {
+            ok: true,
+            dados: {
+              numero: r.dados.numero,
+              criadoEm: r.dados.criadoEm,
+              itens: r.dados.itens.map((i) => ({
+                sku: i.sku,
+                titulo: i.titulo,
+                quantidade: i.quantidade,
+              })),
+            },
+          }
+        : r;
+      break;
+    }
+    case 'sugerir_combinacao': {
+      const { sugerirCombinacoes } = await import('../knowledge/combinacoes.js');
+      const d = dados as { skus: string[]; limite?: number };
+      resultado = {
+        ok: true,
+        dados: sugerirCombinacoes(d.skus, d.limite ? { limite: d.limite } : {}),
+      };
+      break;
+    }
     case 'buscar_conhecimento': {
       const { buscarTrechos } = await import('../knowledge/index.js');
       resultado = { ok: true, dados: buscarTrechos((dados as { termo: string }).termo) };

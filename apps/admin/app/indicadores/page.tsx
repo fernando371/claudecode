@@ -14,6 +14,8 @@ interface Indicadores {
   produtosMaisConsultados: Array<{ produto: string; total: number }>;
   consultasSobreAtraso: number;
   cliquesEmProdutosOuCarrinhos: number;
+  crossSellOferecido: number;
+  receitaPotencialIdentificadaCentavos: number;
   conversoesAssistidasSimuladas: number;
   carrinhosRecuperadosSimulados: number;
   receitaAssistidaSimuladaCentavos: number;
@@ -52,6 +54,8 @@ export default async function Pagina() {
     ['Respostas escritas por atendentes', i.mensagensDeAtendentes],
     ['Consultas sobre atraso', i.consultasSobreAtraso],
     ['Links de produto/carrinho', i.cliquesEmProdutosOuCarrinhos],
+    ['Combinações oferecidas', i.crossSellOferecido],
+    ['Receita potencial identificada', real(i.receitaPotencialIdentificadaCentavos)],
     ['Conversões assistidas (simul.)', i.conversoesAssistidasSimuladas],
     ['Carrinhos recuperados (simul.)', i.carrinhosRecuperadosSimulados],
     ['Receita assistida (simul.)', real(i.receitaAssistidaSimuladaCentavos)],

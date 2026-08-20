@@ -19,6 +19,8 @@ export interface Indicadores {
   produtosMaisConsultados: Array<{ produto: string; total: number }>;
   consultasSobreAtraso: number;
   cliquesEmProdutosOuCarrinhos: number;
+  crossSellOferecido: number;
+  receitaPotencialIdentificadaCentavos: number;
   conversoesAssistidasSimuladas: number;
   carrinhosRecuperadosSimulados: number;
   receitaAssistidaSimuladaCentavos: number;
@@ -90,6 +92,8 @@ export function calcularIndicadores(): Indicadores {
       .slice(0, 10),
     consultasSobreAtraso: contagens['consulta_atraso'] ?? 0,
     cliquesEmProdutosOuCarrinhos: contagens['link_carrinho_gerado'] ?? 0,
+    crossSellOferecido: contagens['crossell_oferecido'] ?? 0,
+    receitaPotencialIdentificadaCentavos: eventos.somarValor('oportunidade_identificada'),
     conversoesAssistidasSimuladas: contagens['conversao_assistida'] ?? 0,
     carrinhosRecuperadosSimulados: contagens['carrinho_recuperado'] ?? 0,
     receitaAssistidaSimuladaCentavos: eventos.somarValor('conversao_assistida'),

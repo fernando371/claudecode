@@ -26,6 +26,23 @@ Lista curta do que **depende de você**. Nada aqui pode ser feito por mim sozinh
 
 ---
 
+## 1b. Aprovar as combinações de produtos e os prazos de duração
+
+- **O que é:** a tabela que diz quais produtos podem ser sugeridos juntos, e quantos
+  dias cada embalagem dura.
+- **Por que precisamos:** o agente **só sugere combinação que esteja nessa tabela**.
+  Hoje ela está preenchida com exemplos e marcada como rascunho — funciona no
+  simulador, mas em produção ele simplesmente não sugere nada.
+- **Onde encontrar:** com o marketing (quais combinações fazem sentido comercialmente)
+  e com o responsável técnico (se a combinação é adequada).
+- **Custo:** nenhum.
+- **Pode esperar?** Sim, mas é o que destrava o cross-sell e a recompra.
+- **Nunca envie pelo chat:** nada.
+- **Próxima ação exata:** me dizer **duas ou três combinações** que a FDC já usa hoje
+  no site ou no atendimento, para eu cadastrar como ponto de partida.
+
+---
+
 ## 2. Definir quem é o responsável técnico pela informação de saúde
 
 - **O que é:** a pessoa (nutricionista, farmacêutico ou responsável técnico) que

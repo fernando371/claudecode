@@ -87,6 +87,15 @@ export async function rotasPainel(app: FastifyInstance): Promise<void> {
     },
   });
 
+  app.get('/carrinhos', {
+    schema: { description: 'Carrinhos abandonados fictícios.', tags: ['painel'] },
+    handler: async (_r, resposta) => {
+      const r = await adaptadores().carrinhos.listarInterno();
+      if (!r.ok) return resposta.code(503).send({ erro: r.erro.codigo, mensagem: r.erro.mensagem });
+      return resposta.send(r.dados);
+    },
+  });
+
   app.get('/conversas', {
     schema: { description: 'Conversas simuladas registradas.', tags: ['painel'] },
     handler: async (_r, resposta) =>

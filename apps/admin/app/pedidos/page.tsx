@@ -18,8 +18,18 @@ const real = (c: number) =>
   (c / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 const data = (iso: string) => new Date(iso).toLocaleDateString('pt-BR');
 
+interface Carrinho {
+  id: string;
+  clienteId: string;
+  criadoEm: string;
+  itens: Array<{ sku: string; quantidade: number }>;
+}
+
 export default async function Pagina() {
-  const pedidos = await buscar<Pedido[]>('/pedidos');
+  const [pedidos, carrinhos] = await Promise.all([
+    buscar<Pedido[]>('/pedidos'),
+    buscar<Carrinho[]>('/carrinhos'),
+  ]);
   if (temErro(pedidos))
     return (
       <>
@@ -59,6 +69,27 @@ export default async function Pagina() {
             p.telefoneCliente,
           ])}
         />
+      </div>
+
+      <div className="bloco">
+        <h3>Carrinhos abandonados fictícios</h3>
+        <p style={{ color: 'var(--suave)', marginTop: 0 }}>
+          O agente só mostra o carrinho quando o próprio cliente pergunta por ele. Nesta fase não
+          existe nenhum envio ativo de recuperação.
+        </p>
+        {temErro(carrinhos) ? (
+          <Aviso tipo="erro">{carrinhos.erroApi}</Aviso>
+        ) : (
+          <Tabela
+            colunas={['Carrinho', 'Cliente', 'Criado em', 'Itens']}
+            linhas={carrinhos.map((c) => [
+              c.id,
+              c.clienteId,
+              data(c.criadoEm),
+              c.itens.map((i) => `${i.quantidade}x ${i.sku}`).join(', '),
+            ])}
+          />
+        )}
       </div>
     </>
   );

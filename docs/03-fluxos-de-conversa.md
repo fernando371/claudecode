@@ -146,6 +146,66 @@ A resposta escrita por uma pessoa passa pelo mesmo canal do agente — ou seja,
 **também respeita a trava de envio real do WhatsApp**. No ambiente simulado ela fica
 registrada no histórico e na caixa de saída de teste, sem sair para lugar nenhum.
 
+---
+
+## Fluxo 9 — Carrinho abandonado
+
+```
+Cliente: "deixei uns itens no carrinho"
+   ↓ identidade vem do próprio número do WhatsApp
+Agente: lista os produtos do carrinho, o total e o link para retomar
+   ↓ se houver combinação aprovada, sugere um item a mais
+```
+
+**Nada é enviado por iniciativa nossa.** O agente só mostra o carrinho quando o
+cliente pergunta. Recuperação ativa é campanha, e campanha continua desligada.
+
+Se o número não for reconhecido, o agente responde que não encontrou carrinho —
+sem revelar nada.
+
+---
+
+## Fluxo 10 — Recompra
+
+```
+Cliente: "acabou o meu, quero comprar de novo"
+   ↓ identidade vem do número do WhatsApp
+   ↓ agente compara a data da última compra com a duração estimada do rótulo
+Agente: "estes itens já devem estar acabando" + carrinho pronto + aviso de não prescrição
+```
+
+A duração de cada embalagem vem do documento oficial de combinações. Sem esse
+documento aprovado, o agente ainda mostra a última compra, mas **não afirma** que
+o produto está acabando.
+
+---
+
+## Sobre identidade no carrinho e na recompra
+
+Nestes dois fluxos a identidade vem do **próprio canal**: o WhatsApp garante que
+quem escreve é o dono do número. Por isso não pedimos número de pedido.
+
+A contrapartida é que só devolvemos o mínimo — nome dos produtos e data. Endereço,
+pagamento, Nota Fiscal e valor pago continuam exigindo a verificação completa do
+Fluxo 3.
+
+---
+
+## Sobre cross-sell
+
+O agente só sugere combinação que esteja na tabela aprovada do documento
+`combinacoes-e-recompra.md`. Ele **nunca inventa** combinação e **nunca**
+personaliza a sugestão com informação de saúde que o cliente tenha mencionado.
+
+A sugestão é descartada quando:
+
+- alguma regra de segurança de saúde foi acionada (a conversa já foi transferida);
+- o documento de combinações não está aprovado ou está vencido;
+- o produto sugerido está sem estoque;
+- a pergunta era objetiva (preço, estoque) — nesses casos seria empurrar venda.
+
+---
+
 ## Quando a conversa está com um atendente
 
 Enquanto um atendente estiver com a conversa, **a IA não responde nada**. Ao encerrar

@@ -3,8 +3,8 @@
 ## Como rodar
 
 ```bash
-npm test            # 124 testes de dentro do sistema (~2 segundos)
-npm run test:e2e    # 10 testes de navegador, abrindo o painel de verdade (~20 segundos)
+npm test            # 149 testes de dentro do sistema (~2 segundos)
+npm run test:e2e    # 13 testes de navegador, abrindo o painel de verdade (~20 segundos)
 npm run check:all   # formatação + lint + tipos + testes + segredos
 ```
 
@@ -57,6 +57,11 @@ Todos implementados em `tests/cenarios.test.ts` e **passando**:
 - **LGPD (18):** prazos de guarda acordados, expurgo pela política de retenção (respeita os prazos, apaga o
   relato de saúde antes do resto, mantém o registro do próprio expurgo, pode rodar
   duas vezes seguidas), exclusão dos dados de um cliente e interrupção de comunicações.
+- **Vendas (25):** fonte das combinações, previsão de recompra, carrinho abandonado
+  (mostra só do próprio número, registra a oportunidade, não vaza para número
+  desconhecido, transfere quando a integração cai), recompra com minimização de
+  dados e cross-sell (nunca sem estoque, nunca em cima de pergunta de preço, nunca
+  quando uma regra de saúde é acionada).
 - **Integração da API (20):** verificação e assinatura do webhook, simulador,
   ausência de segredos nas respostas, mascaramento dos pedidos e controle de acesso
   do painel (incluindo o bloqueio em produção sem senha).

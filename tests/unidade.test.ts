@@ -361,6 +361,9 @@ describe('Classificação de intenção', () => {
     ['quanto tempo demora a entrega', 'prazo'],
     ['quero trocar o produto', 'troca_devolucao'],
     ['quero falar com um atendente', 'falar_atendente'],
+    ['qual a diferença entre whey e creatina', 'comparacao_produtos'],
+    ['acabou o meu, quero comprar de novo', 'recompra'],
+    ['deixei itens no carrinho', 'carrinho_abandonado'],
     ['xpto qwerty', 'desconhecida'],
   ])('classifica "%s" como %s', (frase, esperado) => {
     expect(classificarIntencao(frase).intencao).toBe(esperado);

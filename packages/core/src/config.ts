@@ -46,6 +46,7 @@ const esquema = z.object({
     .enum(['mock', 'mandae', 'correios', 'fonteslog', 'tmlogistica'])
     .default('mock'),
   LLM_PROVIDER: z.enum(['mock', 'anthropic']).default('mock'),
+  CART_PROVIDER: z.enum(['mock', 'shopify']).default('mock'),
 
   META_APP_SECRET: textoOpcional,
   META_PHONE_NUMBER_ID: textoOpcional,

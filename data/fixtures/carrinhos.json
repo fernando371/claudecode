@@ -1,0 +1,29 @@
+[
+  {
+    "id": "car_demo_1",
+    "clienteId": "cli_demo_ana",
+    "criadoEmDias": -2,
+    "itens": [
+      { "sku": "DEMO-VITC-60", "quantidade": 2 },
+      { "sku": "DEMO-VITD-60", "quantidade": 1 }
+    ],
+    "ficticio": true
+  },
+  {
+    "id": "car_demo_2",
+    "clienteId": "cli_demo_bruno",
+    "criadoEmDias": -5,
+    "itens": [{ "sku": "DEMO-WHEY-900-CHO", "quantidade": 1 }],
+    "ficticio": true
+  },
+  {
+    "id": "car_demo_3",
+    "clienteId": "cli_demo_diego",
+    "criadoEmDias": -1,
+    "itens": [
+      { "sku": "DEMO-CREA-300", "quantidade": 1 },
+      { "sku": "DEMO-MAG-120", "quantidade": 1 }
+    ],
+    "ficticio": true
+  }
+]

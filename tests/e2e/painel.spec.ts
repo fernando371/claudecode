@@ -137,3 +137,36 @@ test.describe('LGPD', () => {
     await expect(page.getByText('Isso não tem volta.')).toBeHidden();
   });
 });
+
+test.describe('Vendas', () => {
+  test('mostra o carrinho abandonado do cliente e oferece o link', async ({ page }) => {
+    await page.goto('/simulador');
+    await page.getByRole('button', { name: 'Deixei itens no carrinho' }).click();
+
+    const resposta = page.locator('.balao.agente').first();
+    await expect(resposta).toContainText('carrinho aberto no seu número');
+    await expect(resposta).toContainText('Vitamina C');
+    await expect(page.getByTestId('diag-intencao')).toContainText('carrinho_abandonado');
+  });
+
+  test('registra uma conversão simulada nos indicadores', async ({ page }) => {
+    await page.goto('/simulador');
+    await page.getByRole('button', { name: 'Deixei itens no carrinho' }).click();
+    await expect(page.locator('.balao.agente').first()).toBeVisible();
+
+    await page.getByLabel('Valor da compra (R$)').fill('200');
+    await page.getByRole('button', { name: 'Carrinho recuperado' }).click();
+    await expect(page.getByText('Conversão simulada de R$ 200 registrada')).toBeVisible();
+
+    await page.goto('/indicadores');
+    await expect(page.getByText('Carrinhos recuperados (simul.)')).toBeVisible();
+  });
+
+  test('lista os carrinhos abandonados fictícios no painel', async ({ page }) => {
+    await page.goto('/pedidos');
+    await expect(
+      page.getByRole('heading', { name: 'Carrinhos abandonados fictícios' }),
+    ).toBeVisible();
+    await expect(page.getByRole('cell', { name: 'car_demo_1' })).toBeVisible();
+  });
+});

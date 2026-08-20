@@ -20,6 +20,7 @@ import {
   metricas,
 } from '../db/repositorios.js';
 import { buscarTrechos } from '../knowledge/index.js';
+import { preverRecompra } from '../knowledge/combinacoes.js';
 import { avaliarAtraso } from '../policies/atraso.js';
 import {
   extrairIdentificacao,
@@ -44,6 +45,7 @@ import { executarFerramenta, type ContextoFerramenta } from './ferramentas.js';
 import { classificarIntencao, INTENCOES_COM_FONTE_OFICIAL } from './intencoes.js';
 import {
   blocoDisponibilidade,
+  formatarData,
   DESCADASTRO_CONFIRMADO,
   formatarPreco,
   INTEGRACAO_FORA,
@@ -269,10 +271,24 @@ export async function processarMensagem(entrada: EntradaMensagem): Promise<Respo
     case 'preco':
     case 'estoque':
     case 'comparacao_produtos':
-    case 'recompra':
-    case 'carrinho_abandonado':
       return finalizar(
         await rotaCatalogo(ctx, texto, intencao, classificacao.confianca, acumulador, inicio),
+      );
+
+    case 'carrinho_abandonado':
+      return finalizar(
+        await rotaCarrinhoAbandonado(
+          ctx,
+          cliente.conhecido,
+          classificacao.confianca,
+          acumulador,
+          inicio,
+        ),
+      );
+
+    case 'recompra':
+      return finalizar(
+        await rotaRecompra(ctx, cliente.conhecido, classificacao.confianca, acumulador, inicio),
       );
 
     case 'composicao':
@@ -413,37 +429,386 @@ async function rotaCatalogo(
       ? '\n\nObs.: itens da FDC Vitaminas e da FDC Nutrition podem ir no mesmo carrinho, sem problema.'
       : '';
 
-  // Link de carrinho: so quando ha item disponivel.
+  // SKUs disponíveis, usados para a sugestão de combinação.
   const disponiveis = produtos.flatMap((p) =>
     p.variantes.filter((v) => v.disponivel).map((v) => v.sku),
   );
-  let linhaCarrinho = '';
-  if (disponiveis.length > 0 && (intencao === 'recompra' || intencao === 'carrinho_abandonado')) {
-    const primeiro = disponiveis[0]!;
-    const carrinho = await executarFerramenta(ctx, 'gerar_link_carrinho', {
-      itens: [{ sku: primeiro, quantidade: 1 }],
-    });
-    if (carrinho.ok) {
-      acumulador.links.push({ titulo: 'Carrinho pronto', url: carrinho.dados as string });
-      linhaCarrinho = `\n\nSe quiser, deixei o carrinho pronto: ${carrinho.dados as string}`;
-      metricas.registrar('link_carrinho_gerado', { conversaId: ctx.conversaId });
-    }
-  }
 
   const aviso =
-    intencao === 'busca_produto' || intencao === 'comparacao_produtos' || intencao === 'recompra'
+    intencao === 'busca_produto' || intencao === 'comparacao_produtos'
       ? `\n\n${AVISO_NAO_PRESCRICAO}`
       : '';
 
+  // Cross-sell só na busca de produto: em pergunta de preço ou estoque seria
+  // empurrar venda em cima de uma dúvida objetiva.
+  let crossSell = '';
+  if (intencao === 'busca_produto' && disponiveis.length > 0) {
+    crossSell = await montarCrossSell(ctx, disponiveis.slice(0, 3), acumulador);
+  }
+
   acumulador.regras.push('catalogo:resposta_com_dado_oficial');
+  acumulador.ferramentas.push(...ctx.usadas);
   return montar({
     conversaId: ctx.conversaId,
-    texto: `${corpo}${notaMarcas}${linhaCarrinho}${aviso}`,
+    texto: `${corpo}${notaMarcas}${crossSell}${aviso}`,
     intencao,
     confianca,
     acumulador,
     inicio,
   });
+}
+
+// ---------------------------------------------------------------------------
+// Vendas: carrinho abandonado, recompra e cross-sell
+// ---------------------------------------------------------------------------
+
+/**
+ * Identidade no carrinho e na recompra.
+ *
+ * Aqui a identidade vem do PRÓPRIO CANAL: o WhatsApp garante que quem escreve é
+ * o dono do número. Por isso não pedimos número de pedido, como fazemos na
+ * consulta de pedido.
+ *
+ * A contrapartida é que só devolvemos o mínimo: nome dos produtos e a data.
+ * Endereço, pagamento, nota fiscal e valor pago continuam exigindo a verificação
+ * completa da rota de pedidos.
+ */
+const NAO_ACHEI_CARRINHO =
+  'Não encontrei nenhum carrinho aberto no seu número. Quer que eu procure algum produto para você?';
+
+const SEM_HISTORICO_DE_COMPRA =
+  'Não encontrei uma compra anterior no seu número. Se você comprou com outro número ou e-mail, me diga qual produto você quer repor que eu procuro.';
+
+/** Monta a lista de produtos de um conjunto de SKUs, usando o catálogo oficial. */
+async function detalharSkus(
+  ctx: ContextoFerramenta,
+  skus: Array<{ sku: string; quantidade: number }>,
+): Promise<{
+  produtos: Array<{
+    sku: string;
+    titulo: string;
+    quantidade: number;
+    precoCentavos: number;
+    disponivel: boolean;
+  }>;
+  falhou: boolean;
+}> {
+  const produtos: Array<{
+    sku: string;
+    titulo: string;
+    quantidade: number;
+    precoCentavos: number;
+    disponivel: boolean;
+  }> = [];
+  let falhou = false;
+
+  for (const item of skus) {
+    const r = await executarFerramenta(ctx, 'detalhar_produto', { sku: item.sku });
+    if (!r.ok) {
+      falhou = true;
+      continue;
+    }
+    const produto = r.dados as Produto;
+    const variante = produto.variantes.find((v) => v.sku.toUpperCase() === item.sku.toUpperCase());
+    produtos.push({
+      sku: item.sku,
+      titulo: `${produto.titulo}${variante && produto.variantes.length > 1 ? ` — ${variante.titulo}` : ''}`,
+      quantidade: item.quantidade,
+      precoCentavos: variante?.precoCentavos ?? 0,
+      disponivel: variante?.disponivel ?? false,
+    });
+  }
+  return { produtos, falhou };
+}
+
+/** Busca uma combinação aprovada para sugerir junto. Nunca inventa. */
+async function montarCrossSell(
+  ctx: ContextoFerramenta,
+  skusDoCliente: string[],
+  acumulador: Acumulador,
+): Promise<string> {
+  // Pedimos mais de uma sugestão de propósito: a primeira pode estar sem estoque,
+  // e nesse caso queremos a próxima em vez de desistir do cross-sell.
+  const r = await executarFerramenta(ctx, 'sugerir_combinacao', { skus: skusDoCliente, limite: 3 });
+  if (!r.ok) return '';
+
+  const { fonte, sugestoes } = r.dados as {
+    fonte: { utilizavel: boolean; motivoIndisponivel: string | null; referencia: string };
+    sugestoes: Array<{ sku: string; motivo: string }>;
+  };
+
+  if (!fonte.utilizavel) {
+    acumulador.regras.push('crossell:sem_fonte_aprovada');
+    return '';
+  }
+  if (sugestoes.length === 0) {
+    acumulador.regras.push('crossell:sem_combinacao_para_estes_itens');
+    return '';
+  }
+
+  let escolhida: { sku: string; motivo: string; titulo: string; precoCentavos: number } | null =
+    null;
+  for (const sugestao of sugestoes) {
+    const detalhe = await executarFerramenta(ctx, 'detalhar_produto', { sku: sugestao.sku });
+    if (!detalhe.ok) continue;
+    const produto = detalhe.dados as Produto;
+    const variante = produto.variantes.find(
+      (v) => v.sku.toUpperCase() === sugestao.sku.toUpperCase(),
+    );
+    if (!variante?.disponivel) {
+      acumulador.regras.push('crossell:sugestao_sem_estoque_descartada');
+      continue;
+    }
+    escolhida = {
+      sku: sugestao.sku,
+      motivo: sugestao.motivo,
+      titulo: produto.titulo,
+      precoCentavos: variante.precoCentavos,
+    };
+    break;
+  }
+
+  if (!escolhida) return '';
+
+  acumulador.fontes.push({ tipo: 'conhecimento', referencia: fonte.referencia });
+  acumulador.regras.push('crossell:sugestao_de_fonte_aprovada');
+  metricas.registrar('crossell_oferecido', { conversaId: ctx.conversaId, detalhe: escolhida.sku });
+
+  return `\n\nMuita gente leva junto: ${escolhida.titulo} (${formatarPreco(escolhida.precoCentavos)}). ${escolhida.motivo}`;
+}
+
+async function rotaCarrinhoAbandonado(
+  ctx: ContextoFerramenta,
+  clienteConhecido: boolean,
+  confianca: number,
+  acumulador: Acumulador,
+  inicio: number,
+): Promise<RespostaAgente> {
+  const responder = (texto: string) =>
+    montar({
+      conversaId: ctx.conversaId,
+      texto,
+      intencao: 'carrinho_abandonado',
+      confianca,
+      acumulador,
+      inicio,
+    });
+
+  if (!clienteConhecido) {
+    acumulador.regras.push('carrinho:numero_nao_reconhecido');
+    return responder(NAO_ACHEI_CARRINHO);
+  }
+
+  const consulta = await executarFerramenta(ctx, 'consultar_carrinho_abandonado', {
+    clienteId: ctx.clienteId,
+  });
+  acumulador.ferramentas.push(...ctx.usadas);
+
+  if (!consulta.ok) {
+    acumulador.regras.push(`carrinho:${consulta.erro.codigo}`);
+    if (consulta.erro.codigo === 'nao_encontrado') return responder(NAO_ACHEI_CARRINHO);
+    metricas.registrar('erro_integracao', {
+      conversaId: ctx.conversaId,
+      detalhe: consulta.erro.origem,
+    });
+    return transferir(
+      ctx.conversaId,
+      ctx.clienteId,
+      'integracao_indisponivel',
+      'consulta de carrinho',
+      acumulador,
+      inicio,
+      INTEGRACAO_FORA,
+    );
+  }
+
+  const carrinho = consulta.dados as {
+    id: string;
+    criadoEm: string;
+    itens: Array<{ sku: string; quantidade: number }>;
+  };
+  acumulador.fontes.push({ tipo: 'catalogo', referencia: `carrinho ${carrinho.id}` });
+  auditoria.registrar({
+    ator: `agente:${ctx.clienteId}`,
+    acao: 'carrinho:consultado_por_identidade_do_canal',
+    recurso: ctx.conversaId,
+    resultado: 'permitido',
+    detalhe: 'identidade verificada pelo número do WhatsApp; devolvido apenas nome dos produtos',
+  });
+
+  const { produtos } = await detalharSkus(ctx, carrinho.itens);
+  const disponiveis = produtos.filter((p) => p.disponivel);
+
+  if (produtos.length === 0) {
+    acumulador.regras.push('carrinho:itens_fora_do_catalogo');
+    return responder(NAO_ACHEI_CARRINHO);
+  }
+
+  const linhas = produtos
+    .map((p) => `• ${p.quantidade}x ${p.titulo}${p.disponivel ? '' : ' — sem estoque no momento'}`)
+    .join('\n');
+
+  let corpo = `Encontrei um carrinho aberto no seu número, de ${formatarData(carrinho.criadoEm)}:\n${linhas}`;
+
+  if (disponiveis.length === 0) {
+    acumulador.regras.push('carrinho:sem_item_disponivel');
+    return responder(
+      `${corpo}\n\nNo momento nenhum desses itens está disponível. Quer que eu te avise ou procure uma alternativa?`,
+    );
+  }
+
+  const valorCentavos = disponiveis.reduce((soma, p) => soma + p.precoCentavos * p.quantidade, 0);
+  const link = await executarFerramenta(ctx, 'gerar_link_carrinho', {
+    itens: disponiveis.map((p) => ({ sku: p.sku, quantidade: p.quantidade })),
+  });
+
+  if (link.ok) {
+    acumulador.links.push({ titulo: 'Retomar carrinho', url: link.dados as string });
+    corpo += `\n\nTotal: ${formatarPreco(valorCentavos)}. É só usar este link para retomar: ${link.dados as string}`;
+    metricas.registrar('link_carrinho_gerado', { conversaId: ctx.conversaId });
+    metricas.registrar('oportunidade_identificada', {
+      conversaId: ctx.conversaId,
+      valorCentavos,
+      detalhe: 'carrinho_abandonado',
+    });
+    acumulador.regras.push('carrinho:link_de_retomada_gerado');
+  }
+
+  corpo += await montarCrossSell(
+    ctx,
+    disponiveis.map((p) => p.sku),
+    acumulador,
+  );
+  acumulador.ferramentas.push(...ctx.usadas);
+  return responder(corpo);
+}
+
+async function rotaRecompra(
+  ctx: ContextoFerramenta,
+  clienteConhecido: boolean,
+  confianca: number,
+  acumulador: Acumulador,
+  inicio: number,
+): Promise<RespostaAgente> {
+  const responder = (texto: string) =>
+    montar({
+      conversaId: ctx.conversaId,
+      texto,
+      intencao: 'recompra',
+      confianca,
+      acumulador,
+      inicio,
+    });
+
+  if (!clienteConhecido) {
+    acumulador.regras.push('recompra:numero_nao_reconhecido');
+    return responder(SEM_HISTORICO_DE_COMPRA);
+  }
+
+  const consulta = await executarFerramenta(ctx, 'consultar_ultimo_pedido', {
+    clienteId: ctx.clienteId,
+  });
+  acumulador.ferramentas.push(...ctx.usadas);
+
+  if (!consulta.ok) {
+    acumulador.regras.push(`recompra:${consulta.erro.codigo}`);
+    if (consulta.erro.codigo === 'nao_encontrado') return responder(SEM_HISTORICO_DE_COMPRA);
+    metricas.registrar('erro_integracao', {
+      conversaId: ctx.conversaId,
+      detalhe: consulta.erro.origem,
+    });
+    return transferir(
+      ctx.conversaId,
+      ctx.clienteId,
+      'integracao_indisponivel',
+      'consulta de recompra',
+      acumulador,
+      inicio,
+      INTEGRACAO_FORA,
+    );
+  }
+
+  const pedido = consulta.dados as {
+    numero: string;
+    criadoEm: string;
+    itens: Array<{ sku: string; titulo: string; quantidade: number }>;
+  };
+  acumulador.fontes.push({ tipo: 'pedido', referencia: `último pedido ${pedido.numero}` });
+  auditoria.registrar({
+    ator: `agente:${ctx.clienteId}`,
+    acao: 'recompra:consultada_por_identidade_do_canal',
+    recurso: ctx.conversaId,
+    resultado: 'permitido',
+    detalhe: 'identidade verificada pelo número do WhatsApp; devolvido apenas produtos e data',
+  });
+
+  const { previsoes, fonte } = preverRecompra(pedido.itens, pedido.criadoEm);
+  if (!fonte.utilizavel) {
+    acumulador.regras.push('recompra:sem_fonte_aprovada_de_duracao');
+  } else {
+    acumulador.fontes.push({ tipo: 'conhecimento', referencia: fonte.referencia });
+  }
+
+  const paraRepor = previsoes.filter((p) => p.naHoraDeRepor).map((p) => p.sku);
+  const itensAlvo =
+    paraRepor.length > 0 ? pedido.itens.filter((i) => paraRepor.includes(i.sku)) : pedido.itens;
+
+  const { produtos } = await detalharSkus(
+    ctx,
+    itensAlvo.map((i) => ({ sku: i.sku, quantidade: i.quantidade })),
+  );
+  const disponiveis = produtos.filter((p) => p.disponivel);
+
+  const abertura =
+    paraRepor.length > 0
+      ? `Pela sua última compra (${formatarData(pedido.criadoEm)}), estes itens já devem estar acabando:`
+      : `Sua última compra foi em ${formatarData(pedido.criadoEm)} e teve:`;
+
+  const linhas = produtos
+    .map((p) => `• ${p.quantidade}x ${p.titulo}${p.disponivel ? '' : ' — sem estoque no momento'}`)
+    .join('\n');
+
+  if (produtos.length === 0) {
+    acumulador.regras.push('recompra:itens_fora_do_catalogo');
+    return responder(SEM_HISTORICO_DE_COMPRA);
+  }
+
+  let corpo = `${abertura}\n${linhas}`;
+  acumulador.regras.push(
+    paraRepor.length > 0 ? 'recompra:item_no_prazo_de_reposicao' : 'recompra:sem_item_vencendo',
+  );
+
+  if (disponiveis.length === 0) {
+    return responder(
+      `${corpo}\n\nNo momento nenhum desses itens está disponível. Quer que eu procure uma alternativa?`,
+    );
+  }
+
+  const valorCentavos = disponiveis.reduce((soma, p) => soma + p.precoCentavos * p.quantidade, 0);
+  const link = await executarFerramenta(ctx, 'gerar_link_carrinho', {
+    itens: disponiveis.map((p) => ({ sku: p.sku, quantidade: p.quantidade })),
+  });
+
+  if (link.ok) {
+    acumulador.links.push({ titulo: 'Repor a compra', url: link.dados as string });
+    corpo += `\n\nSe quiser repor, deixei o carrinho pronto (${formatarPreco(valorCentavos)}): ${link.dados as string}`;
+    metricas.registrar('link_carrinho_gerado', { conversaId: ctx.conversaId });
+    metricas.registrar('oportunidade_identificada', {
+      conversaId: ctx.conversaId,
+      valorCentavos,
+      detalhe: 'recompra',
+    });
+    acumulador.regras.push('recompra:link_gerado');
+  }
+
+  corpo += await montarCrossSell(
+    ctx,
+    disponiveis.map((p) => p.sku),
+    acumulador,
+  );
+  corpo += `\n\n${AVISO_NAO_PRESCRICAO}`;
+  acumulador.ferramentas.push(...ctx.usadas);
+  return responder(corpo);
 }
 
 async function rotaRotulo(
@@ -734,14 +1099,15 @@ async function rotaDesconhecida(
 
 function identificarCliente(remetente: string) {
   const existente = clientes.porId(remetente) ?? clientes.porTelefone(remetente);
-  if (existente) return existente;
-  return clientes.criar({
+  if (existente) return { ...existente, conhecido: true };
+  const novo = clientes.criar({
     id: apelidoAnonimo(remetente),
     nome: 'Cliente não identificado',
     email: '',
     telefone: remetente,
     ficticio: true,
   });
+  return { ...novo, conhecido: false };
 }
 
 function transferir(

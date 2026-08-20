@@ -4,6 +4,7 @@ import {
   caixaDeSaidaSimulada,
   conversas,
   limparCaixaDeSaidaSimulada,
+  metricas,
   mensagens,
   processarMensagem,
   simulacao,
@@ -29,7 +30,39 @@ const esquemaFalhas = z.object({
 });
 
 /** Endpoints do "Simulador de Conversas". Nunca tocam em sistema real. */
+const esquemaConversao = z.object({
+  conversaId: z.string().min(3).max(80),
+  valorCentavos: z.number().int().min(0).max(100_000_000),
+  origem: z.enum(['carrinho_abandonado', 'recompra', 'atendimento']).default('atendimento'),
+});
+
 export async function rotasSimulador(app: FastifyInstance): Promise<void> {
+  app.post('/simulador/conversao', {
+    schema: {
+      description:
+        'Registra uma conversão SIMULADA para esta conversa, só para demonstrar a medição. Não cria pedido em lugar nenhum.',
+      tags: ['simulador'],
+    },
+    handler: async (requisicao, resposta) => {
+      const analisado = esquemaConversao.safeParse(requisicao.body);
+      if (!analisado.success) {
+        return resposta
+          .code(400)
+          .send({ erro: 'entrada_invalida', detalhes: analisado.error.issues });
+      }
+      const { conversaId, valorCentavos, origem } = analisado.data;
+      if (!conversas.porId(conversaId)) {
+        return resposta.code(404).send({ erro: 'conversa_nao_encontrada' });
+      }
+      metricas.registrar('conversao_assistida', { conversaId, valorCentavos, detalhe: origem });
+      if (origem === 'carrinho_abandonado') {
+        metricas.registrar('carrinho_recuperado', { conversaId, valorCentavos });
+      }
+      auditarAcaoAdministrativa('simulador:conversao', conversaId, `origem ${origem} (simulada)`);
+      return resposta.send({ ok: true, simulada: true });
+    },
+  });
+
   app.post('/simulador/mensagem', {
     schema: { description: 'Envia uma mensagem como se fosse um cliente.', tags: ['simulador'] },
     handler: async (requisicao, resposta) => {

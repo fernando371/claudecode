@@ -17,6 +17,12 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 - Identifica **possível atraso** comparando prazo prometido, faturamento, coleta e
   última movimentação.
 - Gera link de produto e de carrinho, inclusive **misturando FDC Vitaminas e FDC Nutrition**.
+- **Carrinho abandonado:** mostra o carrinho do cliente e o link para retomar, quando
+  ele pergunta. Identidade vem do número do WhatsApp; devolve só nome dos produtos.
+- **Recompra:** compara a data da última compra com a duração estimada do rótulo e
+  oferece reposição do que já deve estar acabando.
+- **Cross-sell:** sugere combinações que estejam na tabela aprovada, nunca inventadas,
+  nunca personalizadas por informação de saúde, e nunca em cima de pergunta objetiva.
 - Registra motivo de contato, transfere para atendente e alimenta os indicadores.
 
 ### Segurança para suplementos
@@ -82,8 +88,8 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 
 ### Qualidade
 
-- **124 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
-- **10 testes de navegador** (`npm run test:e2e`) percorrendo o painel de verdade,
+- **149 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
+- **13 testes de navegador** (`npm run test:e2e`) percorrendo o painel de verdade,
   incluindo o atendimento humano de ponta a ponta.
 - Verificação de tipos, lint, formatação e verificação de segredos, todos limpos.
 - Nenhum teste depende de credencial, internet ou serviço pago.
@@ -108,7 +114,7 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 
 ### Depende de você (ver `PENDENCIAS-FERNANDO.md`)
 
-1. Conteúdo oficial da FDC aprovado (rótulos, FAQ, frete, trocas).
+1. Conteúdo oficial da FDC aprovado (rótulos, FAQ, frete, trocas, combinações).
 2. Responsável técnico que aprova a informação de saúde.
 3. Decisão sobre acesso à Meta, ao Shopify, ao SAP e às transportadoras.
 4. Autorização para salvar o projeto no Git.

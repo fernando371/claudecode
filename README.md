@@ -38,16 +38,17 @@ Para parar, aperte `Ctrl + C` no terminal.
 ## O que dá para fazer agora
 
 1. Abrir o **Simulador de Conversas** e conversar com o agente como se fosse um cliente.
-2. Testar situações difíceis com um clique: cliente grávida, reação adversa,
+2. Ver o agente tratar carrinho abandonado, recompra e sugestão de combinação.
+3. Testar situações difíceis com um clique: cliente grávida, reação adversa,
    pedido atrasado, pedido extraviado, Shopify fora do ar, SAP fora do ar,
    tentativa de acessar pedido de outra pessoa, tentativa de burlar o agente.
-3. Ver, em cada resposta, **qual intenção foi detectada, quais fontes foram usadas,
+4. Ver, em cada resposta, **qual intenção foi detectada, quais fontes foram usadas,
    quais regras foram acionadas** e se houve transferência para atendente.
-4. Acompanhar a fila de atendimento humano e, dentro dela, **abrir a conversa, ler o
+5. Acompanhar a fila de atendimento humano e, dentro dela, **abrir a conversa, ler o
    histórico e responder o cliente como atendente**.
-5. Acompanhar os indicadores e a trilha de auditoria.
-6. Atender pedidos de LGPD: parar comunicações de um cliente ou excluir os dados dele.
-7. Desligar a IA ou o WhatsApp na hora, pelo painel (modo de emergência).
+6. Acompanhar os indicadores e a trilha de auditoria.
+7. Atender pedidos de LGPD: parar comunicações de um cliente ou excluir os dados dele.
+8. Desligar a IA ou o WhatsApp na hora, pelo painel (modo de emergência).
 
 ---
 

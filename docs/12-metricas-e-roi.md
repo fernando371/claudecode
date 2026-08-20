@@ -19,8 +19,14 @@ Eles provam que a medição funciona; **não** projetam resultado de negócio.
 
 ### Comercial
 
+As conversões são registradas por um botão no simulador ("Conversão simulada"),
+que existe só para provar que a medição funciona. Ele **não cria pedido** em lugar
+nenhum. Quando o Shopify estiver conectado, a conversão passa a vir do pedido real.
+
 - Produtos mais consultados
 - Links de produto e carrinho gerados
+- Combinações oferecidas (cross-sell)
+- Receita potencial identificada (soma dos carrinhos e reposições oferecidos)
 - Conversões assistidas (simuladas)
 - Carrinhos recuperados (simulados)
 - Receita assistida (simulada)

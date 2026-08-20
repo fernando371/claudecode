@@ -1,5 +1,8 @@
 import type { StatusIntegracao } from '@fdc/shared';
 import { config, envioRealPermitido } from '../config.js';
+import { MockCartProvider } from './carts/mock.js';
+import { ShopifyCartProvider } from './carts/shopify.js';
+import type { CartProvider } from './carts/tipos.js';
 import { MockCatalogProvider } from './catalog/mock.js';
 import { ShopifyCatalogProvider } from './catalog/shopify.js';
 import type { CatalogProvider } from './catalog/tipos.js';
@@ -26,6 +29,7 @@ export interface Adaptadores {
   notaFiscal: InvoiceProvider;
   rastreio: TrackingProvider;
   llm: LLMProvider;
+  carrinhos: CartProvider;
 }
 
 /** Monta o conjunto de adaptadores conforme o .env. Padrao: tudo simulado. */
@@ -43,6 +47,7 @@ export function adaptadores(): Adaptadores {
         ? new MockTrackingProvider()
         : (transportadoraPorNome(c.TRACKING_PROVIDER) ?? new MockTrackingProvider()),
     llm: c.LLM_PROVIDER === 'anthropic' ? new AnthropicLLMProvider() : new MockLLMProvider(),
+    carrinhos: c.CART_PROVIDER === 'shopify' ? new ShopifyCartProvider() : new MockCartProvider(),
   };
 }
 
@@ -105,6 +110,16 @@ export function statusIntegracoes(): StatusIntegracao[] {
         a.llm.modo === 'mock'
           ? 'Simulado e determinístico (sem custo)'
           : 'API da Anthropic — cobrança separada da assinatura do Claude Code',
+    },
+    {
+      nome: 'Carrinhos abandonados',
+      adaptador: a.carrinhos.nome,
+      modo: a.carrinhos.modo,
+      saudavel: true,
+      detalhe:
+        a.carrinhos.modo === 'mock'
+          ? `${descrever('mock')} · Só responde quando o cliente pergunta`
+          : 'Contrato criado; depende de definição de base legal e consentimento',
     },
     {
       nome: 'Campanhas (envio ativo)',
