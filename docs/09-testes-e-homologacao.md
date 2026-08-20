@@ -3,7 +3,7 @@
 ## Como rodar
 
 ```bash
-npm test            # 122 testes de dentro do sistema (~2 segundos)
+npm test            # 124 testes de dentro do sistema (~2 segundos)
 npm run test:e2e    # 10 testes de navegador, abrindo o painel de verdade (~20 segundos)
 npm run check:all   # formatação + lint + tipos + testes + segredos
 ```
@@ -54,7 +54,7 @@ Todos implementados em `tests/cenarios.test.ts` e **passando**:
   atendente, silêncio da IA durante o atendimento, anotações internas, encerramento
   e devolução ao agente, e a garantia de que a resposta humana também não escapa da
   trava de envio real.
-- **LGPD (16):** expurgo pela política de retenção (respeita os prazos, apaga o
+- **LGPD (18):** prazos de guarda acordados, expurgo pela política de retenção (respeita os prazos, apaga o
   relato de saúde antes do resto, mantém o registro do próprio expurgo, pode rodar
   duas vezes seguidas), exclusão dos dados de um cliente e interrupção de comunicações.
 - **Integração da API (20):** verificação e assinatura do webhook, simulador,

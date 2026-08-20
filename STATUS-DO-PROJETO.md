@@ -82,7 +82,7 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 
 ### Qualidade
 
-- **122 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
+- **124 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
 - **10 testes de navegador** (`npm run test:e2e`) percorrendo o painel de verdade,
   incluindo o atendimento humano de ponta a ponta.
 - Verificação de tipos, lint, formatação e verificação de segredos, todos limpos.

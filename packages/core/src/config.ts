@@ -68,7 +68,7 @@ const esquema = z.object({
   ADMIN_PASSWORD: textoOpcional,
   ADMIN_SESSION_SECRET: textoOpcional,
 
-  RETENTION_CONVERSATIONS_DAYS: inteiro(180),
+  RETENTION_CONVERSATIONS_DAYS: inteiro(365),
   RETENTION_AUDIT_DAYS: inteiro(365),
   RETENTION_HEALTH_FLAGS_DAYS: inteiro(30),
   PII_MASKING_ENABLED: booleano(true),

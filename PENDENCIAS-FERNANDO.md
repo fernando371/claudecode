@@ -119,20 +119,18 @@ Lista curta do que **depende de você**. Nada aqui pode ser feito por mim sozinh
 
 ---
 
-## 8. Confirmar os prazos de guarda dos dados (LGPD)
+## 8. Prazos de guarda dos dados (LGPD) — RESOLVIDO
 
-- **O que é:** por quanto tempo o sistema guarda conversa, trilha de auditoria e
-  marcação de saúde antes de apagar sozinho.
-- **Por que precisamos:** o sistema **já apaga automaticamente**, usando os prazos
-  padrão que coloquei: conversas 180 dias, auditoria 365 dias, marcações de saúde
-  30 dias. Esses números são um ponto de partida razoável, mas quem decide o prazo
-  correto é o jurídico, não eu.
-- **Onde encontrar:** com o advogado ou o responsável por LGPD da Biowell.
-- **Custo:** nenhum (ou horas do jurídico).
-- **Pode esperar?** Sim, mas antes do piloto real com cliente de verdade.
-- **Nunca envie pelo chat:** nada.
-- **Próxima ação exata:** perguntar ao jurídico se 180 / 365 / 30 dias servem. Se
-  quiserem outro número, eu troco em um minuto — é só configuração.
+- **Decisão de 20/08/2026:** conversas e trilha de auditoria em **365 dias**.
+- **Marcações de saúde ficaram em 30 dias**, de propósito. Dado de saúde é sensível
+  pela LGPD e a regra é guardar o mínimo: passados 30 dias, o texto do relato do
+  cliente some e fica só o motivo (por exemplo, `reacao_adversa`), que é o que a
+  operação realmente usa nas estatísticas.
+- **Já está aplicado** e travado por teste automatizado.
+- **Se você quis dizer 365 dias também para as marcações de saúde**, me avise: eu
+  troco, mas recomendo manter os 30 dias.
+- **Vale confirmar com o jurídico** quando houver oportunidade — a decisão é sua e
+  a troca leva um minuto, é só configuração.
 
 ---
 

@@ -15,6 +15,7 @@ import {
   notasConversa,
   NOME_ANONIMIZADO,
   pedidosExclusao,
+  politicaRetencao,
   responderComoAtendente,
   TEXTO_REMOVIDO,
 } from '@fdc/core';
@@ -35,6 +36,22 @@ function envelhecer(tabela: string, coluna: string, id: string, dias: number): v
   db().prepare(`UPDATE ${tabela} SET ${coluna} = ? WHERE id = ?`).run(data, id);
 }
 
+describe('Prazos de guarda acordados', () => {
+  it('usa os prazos definidos com o cliente', () => {
+    const prazos = politicaRetencao();
+    expect(prazos.conversasDias).toBe(365);
+    expect(prazos.auditoriaDias).toBe(365);
+    expect(prazos.marcacoesSaudeDias).toBe(30);
+  });
+
+  it('guarda dado de saúde por menos tempo que o resto', () => {
+    const prazos = politicaRetencao();
+    // Dado de saúde é sensível: a LGPD pede o mínimo necessário.
+    expect(prazos.marcacoesSaudeDias).toBeLessThan(prazos.conversasDias);
+    expect(prazos.marcacoesSaudeDias).toBeLessThan(prazos.auditoriaDias);
+  });
+});
+
 describe('Expurgo pela política de retenção', () => {
   it('não apaga nada que ainda está dentro do prazo', async () => {
     const r = await conversar('quanto custa a vitamina C?');
@@ -46,7 +63,7 @@ describe('Expurgo pela política de retenção', () => {
 
   it('apaga conversas e mensagens que passaram do prazo', async () => {
     const r = await conversar('quanto custa a vitamina C?');
-    envelhecer('conversas', 'iniciada_em', r.conversaId, 200);
+    envelhecer('conversas', 'iniciada_em', r.conversaId, 400);
 
     const relatorio = executarExpurgo();
     expect(relatorio.conversasApagadas).toBe(1);
@@ -58,7 +75,7 @@ describe('Expurgo pela política de retenção', () => {
   it('apaga as anotações internas junto com a conversa', async () => {
     const r = await conversar('quero falar com um atendente');
     notasConversa.criar(r.conversaId, 'Marina', 'Anotação de teste.');
-    envelhecer('conversas', 'iniciada_em', r.conversaId, 200);
+    envelhecer('conversas', 'iniciada_em', r.conversaId, 400);
 
     const relatorio = executarExpurgo();
     expect(relatorio.notasApagadas).toBe(1);
@@ -70,7 +87,7 @@ describe('Expurgo pela política de retenção', () => {
     const item = filaHumana.listar()[0];
     expect(item?.resumo).toContain('passei mal');
 
-    // 40 dias: passou do prazo de saúde (30), mas não do de conversas (180).
+    // 40 dias: passou do prazo de saúde (30), mas não do de conversas (365).
     envelhecer('fila_humana', 'criado_em', item!.id, 40);
     const relatorio = executarExpurgo();
 
@@ -125,7 +142,7 @@ describe('Expurgo pela política de retenção', () => {
 
   it('pode rodar duas vezes seguidas sem efeito colateral', async () => {
     const r = await conversar('quanto custa a vitamina C?');
-    envelhecer('conversas', 'iniciada_em', r.conversaId, 200);
+    envelhecer('conversas', 'iniciada_em', r.conversaId, 400);
 
     expect(executarExpurgo().conversasApagadas).toBe(1);
     expect(executarExpurgo().conversasApagadas).toBe(0);
@@ -212,7 +229,7 @@ describe('Atendimento humano e retenção convivem', () => {
   it('a resposta do atendente também some quando a conversa expira', async () => {
     const r = await conversar('quero falar com um atendente');
     await responderComoAtendente(r.conversaId, 'Marina', 'Oi, sou a Marina.');
-    envelhecer('conversas', 'iniciada_em', r.conversaId, 200);
+    envelhecer('conversas', 'iniciada_em', r.conversaId, 400);
 
     executarExpurgo();
     expect(mensagens.porConversa(r.conversaId)).toHaveLength(0);
