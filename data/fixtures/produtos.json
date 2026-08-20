@@ -1,0 +1,148 @@
+[
+  {
+    "id": "demo-vit-c-1000",
+    "marca": "FDC Vitaminas",
+    "titulo": "[EXEMPLO] Vitamina C 1000mg - 60 cápsulas",
+    "descricaoCurta": "Produto de demonstração usado apenas para testes do protótipo. Não representa um produto real da FDC.",
+    "categoria": "vitaminas",
+    "url": "https://exemplo.invalido/produtos/demo-vitamina-c",
+    "imagemUrl": null,
+    "variantes": [
+      {
+        "sku": "DEMO-VITC-60",
+        "titulo": "60 cápsulas",
+        "precoCentavos": 6990,
+        "moeda": "BRL",
+        "disponivel": true,
+        "estoque": 120
+      },
+      {
+        "sku": "DEMO-VITC-120",
+        "titulo": "120 cápsulas",
+        "precoCentavos": 11990,
+        "moeda": "BRL",
+        "disponivel": false,
+        "estoque": 0
+      }
+    ],
+    "rotulo": {
+      "composicao": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado. Preencher com o texto oficial aprovado.",
+      "modoDeUso": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado. Preencher com o texto oficial aprovado.",
+      "advertencias": "[EXEMPLO] Este produto não é medicamento. Não exceder a recomendação diária de consumo. Manter fora do alcance de crianças.",
+      "porcaoPorEmbalagem": "[EXEMPLO] 60 porções"
+    },
+    "ficticio": true
+  },
+  {
+    "id": "demo-vit-d3",
+    "marca": "FDC Vitaminas",
+    "titulo": "[EXEMPLO] Vitamina D3 2000UI - 60 cápsulas",
+    "descricaoCurta": "Produto de demonstração usado apenas para testes do protótipo. Não representa um produto real da FDC.",
+    "categoria": "vitaminas",
+    "url": "https://exemplo.invalido/produtos/demo-vitamina-d3",
+    "imagemUrl": null,
+    "variantes": [
+      {
+        "sku": "DEMO-VITD-60",
+        "titulo": "60 cápsulas",
+        "precoCentavos": 5490,
+        "moeda": "BRL",
+        "disponivel": true,
+        "estoque": 45
+      }
+    ],
+    "rotulo": {
+      "composicao": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado. Preencher com o texto oficial aprovado.",
+      "modoDeUso": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado. Preencher com o texto oficial aprovado.",
+      "advertencias": "[EXEMPLO] Este produto não é medicamento. Não exceder a recomendação diária de consumo.",
+      "porcaoPorEmbalagem": "[EXEMPLO] 60 porções"
+    },
+    "ficticio": true
+  },
+  {
+    "id": "demo-magnesio",
+    "marca": "FDC Vitaminas",
+    "titulo": "[EXEMPLO] Magnésio Dimalato - 120 cápsulas",
+    "descricaoCurta": "Produto de demonstração usado apenas para testes do protótipo. Não representa um produto real da FDC.",
+    "categoria": "minerais",
+    "url": "https://exemplo.invalido/produtos/demo-magnesio",
+    "imagemUrl": null,
+    "variantes": [
+      {
+        "sku": "DEMO-MAG-120",
+        "titulo": "120 cápsulas",
+        "precoCentavos": 8990,
+        "moeda": "BRL",
+        "disponivel": true,
+        "estoque": 8
+      }
+    ],
+    "rotulo": {
+      "composicao": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado.",
+      "modoDeUso": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado.",
+      "advertencias": "[EXEMPLO] Este produto não é medicamento.",
+      "porcaoPorEmbalagem": "[EXEMPLO] 120 porções"
+    },
+    "ficticio": true
+  },
+  {
+    "id": "demo-whey",
+    "marca": "FDC Nutrition",
+    "titulo": "[EXEMPLO] Whey Protein Concentrado 900g - Baunilha",
+    "descricaoCurta": "Produto de demonstração da linha esportiva. Não representa um produto real da FDC.",
+    "categoria": "proteinas",
+    "url": "https://exemplo.invalido/produtos/demo-whey",
+    "imagemUrl": null,
+    "variantes": [
+      {
+        "sku": "DEMO-WHEY-900-BAU",
+        "titulo": "900g Baunilha",
+        "precoCentavos": 14990,
+        "moeda": "BRL",
+        "disponivel": true,
+        "estoque": 30
+      },
+      {
+        "sku": "DEMO-WHEY-900-CHO",
+        "titulo": "900g Chocolate",
+        "precoCentavos": 14990,
+        "moeda": "BRL",
+        "disponivel": true,
+        "estoque": 12
+      }
+    ],
+    "rotulo": {
+      "composicao": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado.",
+      "modoDeUso": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado.",
+      "advertencias": "[EXEMPLO] Contém derivados de leite. Este produto não é medicamento.",
+      "porcaoPorEmbalagem": "[EXEMPLO] 30 porções"
+    },
+    "ficticio": true
+  },
+  {
+    "id": "demo-creatina",
+    "marca": "FDC Nutrition",
+    "titulo": "[EXEMPLO] Creatina Monohidratada 300g",
+    "descricaoCurta": "Produto de demonstração da linha esportiva. Não representa um produto real da FDC.",
+    "categoria": "performance",
+    "url": "https://exemplo.invalido/produtos/demo-creatina",
+    "imagemUrl": null,
+    "variantes": [
+      {
+        "sku": "DEMO-CREA-300",
+        "titulo": "300g",
+        "precoCentavos": 12990,
+        "moeda": "BRL",
+        "disponivel": false,
+        "estoque": 0
+      }
+    ],
+    "rotulo": {
+      "composicao": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado.",
+      "modoDeUso": "[EXEMPLO] Conteúdo do rótulo ainda não cadastrado.",
+      "advertencias": "[EXEMPLO] Este produto não é medicamento.",
+      "porcaoPorEmbalagem": "[EXEMPLO] 100 porções"
+    },
+    "ficticio": true
+  }
+]

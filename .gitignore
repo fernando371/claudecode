@@ -1,4 +1,58 @@
+# --- Python (bot legado) ---
 __pycache__/
 *.pyc
 *.pyo
+
+# --- Segredos: NUNCA versionar ---
 .env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+**/credentials.json
+**/service-account*.json
+
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- Build ---
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# --- Banco local / dados de execucao ---
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+data/runtime/
+data/backups/
+**/data/runtime/
+**/data/backups/
+
+# --- Testes / cobertura ---
+coverage/
+.vitest/
+playwright-report/
+test-results/
+
+# --- Sistema operacional / editores ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+
+# --- Logs ---
+logs/
+*.log
+next-env.d.ts

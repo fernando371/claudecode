@@ -1,0 +1,22 @@
+# MODELO DE ANALISE FINANCEIRA - FDC WhatsApp AI
+# Nenhum valor foi inventado. Preencha a coluna "valor_mensal" com dados reais da operacao.
+# Todos os valores em Reais (R$). Use ponto como separador decimal.
+bloco;item;valor_mensal;como_obter;observacao
+GANHO;Receita originada pelo WhatsApp;;Pedidos cujo primeiro contato foi o WhatsApp;Medir com parametro utm_source=whatsapp
+GANHO;Receita assistida pelo WhatsApp;;Pedidos que tiveram contato pelo WhatsApp antes da compra;Janela de atribuicao sugerida: 7 dias
+GANHO;Margem de contribuicao das vendas assistidas;;Receita assistida x margem media da FDC;Pedir margem media ao financeiro
+GANHO;Receita recuperada de carrinho;;Pedidos fechados apos mensagem de carrinho abandonado;So valido com consentimento
+GANHO;Receita de recompra;;Pedidos fechados apos mensagem de reposicao;So valido com consentimento
+GANHO;Reducao de horas de atendimento;;Horas economizadas x custo/hora do atendente;Medir antes e depois do piloto
+CUSTO;Meta (WhatsApp Business Platform);;Painel de faturamento da Meta;Cobranca por conversa/modelo, varia por categoria
+CUSTO;Provedor de IA (API Anthropic);;Console da Anthropic;NAO incluso na assinatura do Claude Code
+CUSTO;Fornecedor ou BSP;;Contrato do parceiro;Somente se optarem por BSP
+CUSTO;Hospedagem;;Fatura do provedor de nuvem;Servidor + banco + backup
+CUSTO;Implantacao (uma vez);;Horas de desenvolvimento e integracao;Custo nao recorrente
+CUSTO;Manutencao mensal;;Horas de suporte e evolucao;Estimar apos o piloto
+RESULTADO;Ganho incremental total;=soma dos GANHO;Calculado;
+RESULTADO;Custo mensal total;=soma dos CUSTO recorrentes;Calculado;
+RESULTADO;Resultado mensal;=ganho incremental - custo mensal;Calculado;
+RESULTADO;Prazo de retorno da implantacao (meses);=custo de implantacao / resultado mensal;Calculado;
+RESULTADO;Relacao margem incremental / custo mensal;=margem incremental / custo mensal;Calculado;
+CRITERIO;Criterio sugerido de continuidade;;;So avancar para operacao completa se o resultado mensal for positivo e o retorno da implantacao ocorrer em ate 6 meses

@@ -1,0 +1,44 @@
+{
+  "name": "fdc-whatsapp-ai",
+  "private": true,
+  "version": "0.1.0",
+  "description": "FDC WhatsApp AI - atendimento, vendas e pos-venda pelo WhatsApp (prototipo com dados ficticios)",
+  "type": "module",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "db:reset": "npm run seed -w @fdc/core",
+    "dev": "concurrently -n api,admin -c cyan,magenta \"npm:dev:api\" \"npm:dev:admin\"",
+    "dev:api": "npm run dev -w @fdc/api",
+    "dev:admin": "npm run dev -w @fdc/admin",
+    "start": "npm run dev",
+    "build": "npm run typecheck && npm run build -w @fdc/admin",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "audit:deps": "npm audit --omit=dev",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "check:all": "npm run format:check && npm run lint && npm run typecheck && npm run test && npm run check:secrets"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.2",
+    "concurrently": "^9.1.0",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0",
+    "vitest": "^2.1.8"
+  }
+}

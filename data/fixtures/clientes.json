@@ -1,0 +1,30 @@
+[
+  {
+    "id": "cli_demo_ana",
+    "nome": "[EXEMPLO] Ana Demonstração",
+    "email": "ana.exemplo@exemplo.invalido",
+    "telefone": "+5511900000001",
+    "ficticio": true
+  },
+  {
+    "id": "cli_demo_bruno",
+    "nome": "[EXEMPLO] Bruno Demonstração",
+    "email": "bruno.exemplo@exemplo.invalido",
+    "telefone": "+5511900000002",
+    "ficticio": true
+  },
+  {
+    "id": "cli_demo_carla",
+    "nome": "[EXEMPLO] Carla Demonstração",
+    "email": "carla.exemplo@exemplo.invalido",
+    "telefone": "+5511900000003",
+    "ficticio": true
+  },
+  {
+    "id": "cli_demo_diego",
+    "nome": "[EXEMPLO] Diego Demonstração",
+    "email": "diego.exemplo@exemplo.invalido",
+    "telefone": "+5511900000004",
+    "ficticio": true
+  }
+]

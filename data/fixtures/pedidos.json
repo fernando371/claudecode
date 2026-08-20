@@ -1,0 +1,131 @@
+[
+  {
+    "id": "ped_demo_1001",
+    "numero": "FDC1001",
+    "clienteId": "cli_demo_ana",
+    "criadoEmDias": -12,
+    "statusPagamento": "pago",
+    "statusProcessamento": "despachado",
+    "itens": [
+      {
+        "sku": "DEMO-VITC-60",
+        "titulo": "[EXEMPLO] Vitamina C 1000mg - 60 cápsulas",
+        "marca": "FDC Vitaminas",
+        "quantidade": 2,
+        "precoUnitarioCentavos": 6990
+      }
+    ],
+    "prazoPrometidoEmDias": -2,
+    "codigoRastreio": "DEMOBR000000001",
+    "transportadora": "Mandaê (simulado)",
+    "cenario": "atrasado",
+    "notaFiscal": { "emitida": true, "numero": "000001", "serie": "1", "emitidaEmDias": -11 },
+    "ficticio": true
+  },
+  {
+    "id": "ped_demo_1002",
+    "numero": "FDC1002",
+    "clienteId": "cli_demo_bruno",
+    "criadoEmDias": -3,
+    "statusPagamento": "pago",
+    "statusProcessamento": "faturado",
+    "itens": [
+      {
+        "sku": "DEMO-WHEY-900-BAU",
+        "titulo": "[EXEMPLO] Whey Protein Concentrado 900g - Baunilha",
+        "marca": "FDC Nutrition",
+        "quantidade": 1,
+        "precoUnitarioCentavos": 14990
+      },
+      {
+        "sku": "DEMO-VITD-60",
+        "titulo": "[EXEMPLO] Vitamina D3 2000UI - 60 cápsulas",
+        "marca": "FDC Vitaminas",
+        "quantidade": 1,
+        "precoUnitarioCentavos": 5490
+      }
+    ],
+    "prazoPrometidoEmDias": 4,
+    "codigoRastreio": "DEMOBR000000002",
+    "transportadora": "Correios (simulado)",
+    "cenario": "normal",
+    "notaFiscal": { "emitida": true, "numero": "000002", "serie": "1", "emitidaEmDias": -2 },
+    "ficticio": true
+  },
+  {
+    "id": "ped_demo_1003",
+    "numero": "FDC1003",
+    "clienteId": "cli_demo_carla",
+    "criadoEmDias": -25,
+    "statusPagamento": "pago",
+    "statusProcessamento": "despachado",
+    "itens": [
+      {
+        "sku": "DEMO-MAG-120",
+        "titulo": "[EXEMPLO] Magnésio Dimalato - 120 cápsulas",
+        "marca": "FDC Vitaminas",
+        "quantidade": 1,
+        "precoUnitarioCentavos": 8990
+      }
+    ],
+    "prazoPrometidoEmDias": -12,
+    "codigoRastreio": "DEMOBR000000003",
+    "transportadora": "Fonteslog (simulado)",
+    "cenario": "extraviado",
+    "notaFiscal": { "emitida": true, "numero": "000003", "serie": "1", "emitidaEmDias": -24 },
+    "ficticio": true
+  },
+  {
+    "id": "ped_demo_1004",
+    "numero": "FDC1004",
+    "clienteId": "cli_demo_diego",
+    "criadoEmDias": -1,
+    "statusPagamento": "pendente",
+    "statusProcessamento": "aguardando_faturamento",
+    "itens": [
+      {
+        "sku": "DEMO-CREA-300",
+        "titulo": "[EXEMPLO] Creatina Monohidratada 300g",
+        "marca": "FDC Nutrition",
+        "quantidade": 1,
+        "precoUnitarioCentavos": 12990
+      }
+    ],
+    "prazoPrometidoEmDias": 8,
+    "codigoRastreio": null,
+    "transportadora": null,
+    "cenario": "sem_nota",
+    "notaFiscal": { "emitida": false, "numero": null, "serie": null, "emitidaEmDias": null },
+    "ficticio": true
+  },
+  {
+    "id": "ped_demo_1005",
+    "numero": "FDC1005",
+    "clienteId": "cli_demo_ana",
+    "criadoEmDias": -40,
+    "statusPagamento": "pago",
+    "statusProcessamento": "entregue",
+    "itens": [
+      {
+        "sku": "DEMO-VITC-60",
+        "titulo": "[EXEMPLO] Vitamina C 1000mg - 60 cápsulas",
+        "marca": "FDC Vitaminas",
+        "quantidade": 1,
+        "precoUnitarioCentavos": 6990
+      },
+      {
+        "sku": "DEMO-WHEY-900-CHO",
+        "titulo": "[EXEMPLO] Whey Protein Concentrado 900g - Chocolate",
+        "marca": "FDC Nutrition",
+        "quantidade": 1,
+        "precoUnitarioCentavos": 14990
+      }
+    ],
+    "prazoPrometidoEmDias": -33,
+    "codigoRastreio": "DEMOBR000000005",
+    "transportadora": "TM Logística (simulado)",
+    "cenario": "entregue",
+    "notaFiscal": { "emitida": true, "numero": "000005", "serie": "1", "emitidaEmDias": -39 },
+    "ficticio": true
+  }
+]
