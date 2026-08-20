@@ -1,8 +1,18 @@
 import { buscar, temErro } from '@/lib/api';
 import { Aviso } from '@/components/Aviso';
 import { Etiqueta, Tabela } from '@/components/Tabela';
+import { Expurgo, PedidosDoTitular } from './AcoesLgpd';
+
+interface Retencao {
+  conversasDias: number;
+  auditoriaDias: number;
+  marcacoesSaudeDias: number;
+  mascaramentoAtivo: boolean;
+  ambiente: string;
+}
 
 interface Dados {
+  retencao: Retencao;
   consentimentos: Array<{
     id: string;
     clienteId: string;
@@ -13,7 +23,7 @@ interface Dados {
     registradoEm: string;
     revogadoEm: string | null;
   }>;
-  pedidosLgpd: Array<{
+  pedidos: Array<{
     id: string;
     clienteId: string;
     tipo: string;
@@ -24,7 +34,7 @@ interface Dados {
 }
 
 export default async function Pagina() {
-  const dados = await buscar<Dados>('/consentimentos');
+  const dados = await buscar<Dados>('/lgpd');
   if (temErro(dados))
     return (
       <>
@@ -44,6 +54,34 @@ export default async function Pagina() {
         Nesta fase <strong>nenhum envio ativo acontece</strong>, mesmo com consentimento válido. A
         estrutura existe para quando as campanhas forem autorizadas.
       </Aviso>
+
+      <div className="bloco">
+        <h3>Política de retenção</h3>
+        <Tabela
+          colunas={['Item', 'Prazo']}
+          linhas={[
+            ['Conversas e mensagens', `${dados.retencao.conversasDias} dias`],
+            ['Trilha de auditoria', `${dados.retencao.auditoriaDias} dias`],
+            ['Marcações de saúde', `${dados.retencao.marcacoesSaudeDias} dias`],
+            [
+              'Mascaramento de dados pessoais',
+              dados.retencao.mascaramentoAtivo ? 'Ativo' : 'Inativo',
+            ],
+          ]}
+        />
+        <div style={{ marginTop: 14 }}>
+          <Expurgo />
+        </div>
+      </div>
+
+      <div className="bloco">
+        <h3>Direitos do titular</h3>
+        <p style={{ color: 'var(--suave)', marginTop: 0 }}>
+          Use aqui quando um cliente pedir para parar de receber mensagens ou pedir a exclusão dos
+          dados dele.
+        </p>
+        <PedidosDoTitular clientes={dados.clientes} />
+      </div>
 
       <div className="bloco">
         <h3>Consentimentos</h3>
@@ -70,7 +108,7 @@ export default async function Pagina() {
         <h3>Pedidos de exclusão / interrupção</h3>
         <Tabela
           colunas={['Cliente', 'Tipo', 'Status', 'Criado em']}
-          linhas={dados.pedidosLgpd.map((p) => [
+          linhas={dados.pedidos.map((p) => [
             p.clienteId,
             p.tipo,
             p.status,

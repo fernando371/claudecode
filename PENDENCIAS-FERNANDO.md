@@ -119,14 +119,31 @@ Lista curta do que **depende de você**. Nada aqui pode ser feito por mim sozinh
 
 ---
 
-## 8. Autorização para versionar o projeto (Git)
+## 8. Confirmar os prazos de guarda dos dados (LGPD)
+
+- **O que é:** por quanto tempo o sistema guarda conversa, trilha de auditoria e
+  marcação de saúde antes de apagar sozinho.
+- **Por que precisamos:** o sistema **já apaga automaticamente**, usando os prazos
+  padrão que coloquei: conversas 180 dias, auditoria 365 dias, marcações de saúde
+  30 dias. Esses números são um ponto de partida razoável, mas quem decide o prazo
+  correto é o jurídico, não eu.
+- **Onde encontrar:** com o advogado ou o responsável por LGPD da Biowell.
+- **Custo:** nenhum (ou horas do jurídico).
+- **Pode esperar?** Sim, mas antes do piloto real com cliente de verdade.
+- **Nunca envie pelo chat:** nada.
+- **Próxima ação exata:** perguntar ao jurídico se 180 / 365 / 30 dias servem. Se
+  quiserem outro número, eu troco em um minuto — é só configuração.
+
+---
+
+## 9. Autorização para versionar o projeto (Git)
 
 - **O que é:** permissão para eu salvar o código no repositório do GitHub.
 - **Por que precisamos:** o ambiente onde eu trabalho é temporário. Sem salvar no
   repositório, o trabalho se perde quando a sessão encerra.
 - **Onde encontrar:** você já é o dono do repositório `fernando371/claudecode`.
 - **Custo:** nenhum.
-- **Pode esperar?** **Não.** É a ação mais urgente.
+- **Pode esperar?** Já resolvido.
 - **Nunca envie pelo chat:** nada.
-- **Próxima ação exata:** me responder **"pode salvar no Git"** para eu gravar tudo
-  no branch `claude/fdc-whatsapp-ai-5a84t5`.
+- **Próxima ação exata:** já autorizado por você. Tudo está sendo salvo no branch
+  `claude/fdc-whatsapp-ai-5a84t5` a cada entrega.

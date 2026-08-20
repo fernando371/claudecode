@@ -6,9 +6,10 @@ import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
-import { config, db, envioRealPermitido, log, popular } from '@fdc/core';
+import { agendarExpurgo, config, db, envioRealPermitido, log, popular } from '@fdc/core';
 import { exigirAcessoAdministrativo } from './seguranca.js';
 import { rotasAtendimento } from './routes/atendimento.js';
+import { rotasLgpd } from './routes/lgpd.js';
 import { rotasPainel } from './routes/painel.js';
 import { rotasSimulador } from './routes/simulador.js';
 import { rotasWebhook } from './routes/webhook.js';
@@ -41,8 +42,13 @@ export async function criarServidor() {
     credentials: true,
     methods: ['GET', 'POST', 'PUT'],
   });
+  // O webhook é público e recebe o limite apertado. O painel é autenticado,
+  // atualiza sozinho a cada poucos segundos e precisa de folga maior.
   await app.register(rateLimit, {
-    max: c.RATE_LIMIT_MAX_PER_MINUTE,
+    max: (requisicao) =>
+      requisicao.url.startsWith('/webhooks')
+        ? c.RATE_LIMIT_MAX_PER_MINUTE
+        : c.RATE_LIMIT_PANEL_MAX_PER_MINUTE,
     timeWindow: '1 minute',
     allowList: [],
   });
@@ -96,6 +102,7 @@ export async function criarServidor() {
   await app.register(rotasSimulador);
   await app.register(rotasPainel);
   await app.register(rotasAtendimento);
+  await app.register(rotasLgpd);
 
   return app;
 }
@@ -108,6 +115,9 @@ export async function iniciar(): Promise<void> {
   } catch (erro) {
     log.warn('não foi possível popular dados de demonstração', { erro: String(erro) });
   }
+
+  // Aplica a política de retenção na inicialização e a cada 24 horas.
+  agendarExpurgo();
 
   const app = await criarServidor();
   await app.listen({ port: c.API_PORT, host: '0.0.0.0' });

@@ -74,6 +74,7 @@ const esquema = z.object({
   PII_MASKING_ENABLED: booleano(true),
 
   RATE_LIMIT_MAX_PER_MINUTE: inteiro(60),
+  RATE_LIMIT_PANEL_MAX_PER_MINUTE: inteiro(600),
   INTEGRATION_TIMEOUT_MS: inteiro(8000),
   CIRCUIT_BREAKER_FAILURES: inteiro(3),
   CIRCUIT_BREAKER_COOLDOWN_MS: inteiro(30000),

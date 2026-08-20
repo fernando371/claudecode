@@ -1,6 +1,6 @@
 # ADR 0004 — Sem Playwright nesta fase
 
-**Data:** 2026-08-20 · **Situação:** aceito
+**Data:** 2026-08-20 · **Situação:** substituído pelo [ADR 0005](0005-testes-de-navegador-com-playwright.md)
 
 ## Em uma frase
 

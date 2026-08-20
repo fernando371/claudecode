@@ -273,3 +273,37 @@ describe('API — atendimento humano', () => {
     expect(r.statusCode).toBe(400);
   });
 });
+
+describe('API — limites de requisição separados', () => {
+  it('aperta o webhook público e dá folga ao painel autenticado', async () => {
+    process.env.RATE_LIMIT_MAX_PER_MINUTE = '2';
+    process.env.RATE_LIMIT_PANEL_MAX_PER_MINUTE = '50';
+    limparCacheConfig();
+
+    const restrito = await criarServidor();
+    await restrito.ready();
+
+    try {
+      const chamarWebhook = () =>
+        restrito.inject({ method: 'POST', url: '/webhooks/whatsapp', payload: { entry: [] } });
+
+      // As duas primeiras passam pelo limite (e param na assinatura, com 401).
+      expect((await chamarWebhook()).statusCode).toBe(401);
+      expect((await chamarWebhook()).statusCode).toBe(401);
+      // A terceira é barrada pelo limite.
+      expect((await chamarWebhook()).statusCode).toBe(429);
+
+      // O painel continua respondendo bem além do limite do webhook.
+      for (let i = 0; i < 10; i += 1) {
+        expect((await restrito.inject({ method: 'GET', url: '/indicadores' })).statusCode).toBe(
+          200,
+        );
+      }
+    } finally {
+      await restrito.close();
+      process.env.RATE_LIMIT_MAX_PER_MINUTE = '1000';
+      process.env.RATE_LIMIT_PANEL_MAX_PER_MINUTE = '600';
+      limparCacheConfig();
+    }
+  });
+});

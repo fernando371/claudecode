@@ -166,8 +166,10 @@ export function Simulador() {
   }, [conversaId]);
 
   const alternarFalha = useCallback(async (chave: string, valor: boolean) => {
-    const atual = await chamar<Falhas>('/simulador/falhas', 'PUT', { [chave]: valor });
-    setFalhas(atual);
+    // Marca na hora para o clique responder na hora; o servidor confirma depois.
+    setFalhas((atual) => ({ ...atual, [chave]: valor }));
+    const confirmado = await chamar<Falhas>('/simulador/falhas', 'PUT', { [chave]: valor });
+    if (confirmado && typeof confirmado === 'object') setFalhas(confirmado);
   }, []);
 
   return (
@@ -303,11 +305,11 @@ export function Simulador() {
           )}
           {ultima && (
             <>
-              <p style={{ margin: '4px 0' }}>
+              <p style={{ margin: '4px 0' }} data-testid="diag-intencao">
                 <strong>Intenção:</strong> {ultima.intencao}{' '}
                 <span style={{ color: 'var(--suave)' }}>(confiança {ultima.confianca})</span>
               </p>
-              <p style={{ margin: '4px 0' }}>
+              <p style={{ margin: '4px 0' }} data-testid="diag-transferido">
                 <strong>Transferido para humano:</strong>{' '}
                 {ultima.transferidoParaHumano ? (
                   <span className="etiqueta alerta">SIM — {ultima.motivoEscalonamento}</span>
@@ -315,7 +317,7 @@ export function Simulador() {
                   <span className="etiqueta">Não</span>
                 )}
               </p>
-              <p style={{ margin: '4px 0' }}>
+              <p style={{ margin: '4px 0' }} data-testid="diag-bloqueado">
                 <strong>Bloqueado por segurança:</strong>{' '}
                 {ultima.bloqueadoPorSeguranca ? (
                   <span className="etiqueta alerta">SIM</span>

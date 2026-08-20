@@ -7,6 +7,8 @@ export * from './db/seed.js';
 export * from './knowledge/index.js';
 export * from './policies/saude.js';
 export * from './policies/privacidade.js';
+export * from './lgpd/retencao.js';
+export * from './lgpd/direitosDoTitular.js';
 export * from './policies/promptInjection.js';
 export * from './policies/emergencia.js';
 export * from './policies/atraso.js';

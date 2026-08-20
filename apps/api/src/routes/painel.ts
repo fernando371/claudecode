@@ -5,16 +5,13 @@ import {
   auditoria,
   calcularIndicadores,
   carregarDocumentos,
-  clientes,
   config,
-  consentimentos,
   conversas,
   definirEmergencia,
   estadoEmergencia,
   filaHumana,
   mensagens,
   modelosMensagem,
-  pedidosExclusao,
   politicaRetencao,
   statusIntegracoes,
   enviosCampanha,
@@ -145,20 +142,6 @@ export async function rotasPainel(app: FastifyInstance): Promise<void> {
     handler: async (_r, resposta) => resposta.send(auditoria.listar(300)),
   });
 
-  app.get('/consentimentos', {
-    schema: { description: 'Consentimentos registrados e pedidos LGPD.', tags: ['painel'] },
-    handler: async (_r, resposta) =>
-      resposta.send({
-        consentimentos: consentimentos.listar(),
-        pedidosLgpd: pedidosExclusao.listar(),
-        clientes: clientes.listar().map((c) => ({
-          ...c,
-          email: mascararEmail(c.email),
-          telefone: mascararTelefone(c.telefone),
-        })),
-      }),
-  });
-
   app.get('/campanhas', {
     schema: {
       description: 'Modelos de mensagem e histórico de avaliação (envio desligado).',
@@ -194,7 +177,8 @@ export async function rotasPainel(app: FastifyInstance): Promise<void> {
           somenteHumano: c.HUMAN_ONLY_MODE,
         },
         limites: {
-          requisicoesPorMinuto: c.RATE_LIMIT_MAX_PER_MINUTE,
+          requisicoesPorMinutoWebhook: c.RATE_LIMIT_MAX_PER_MINUTE,
+          requisicoesPorMinutoPainel: c.RATE_LIMIT_PANEL_MAX_PER_MINUTE,
           tempoLimiteIntegracaoMs: c.INTEGRATION_TIMEOUT_MS,
           falhasParaAbrirCircuito: c.CIRCUIT_BREAKER_FAILURES,
           campanhaPorClientePorSemana: c.CAMPAIGN_MAX_PER_CUSTOMER_PER_WEEK,

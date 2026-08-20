@@ -46,7 +46,8 @@ Para parar, aperte `Ctrl + C` no terminal.
 4. Acompanhar a fila de atendimento humano e, dentro dela, **abrir a conversa, ler o
    histórico e responder o cliente como atendente**.
 5. Acompanhar os indicadores e a trilha de auditoria.
-6. Desligar a IA ou o WhatsApp na hora, pelo painel (modo de emergência).
+6. Atender pedidos de LGPD: parar comunicações de um cliente ou excluir os dados dele.
+7. Desligar a IA ou o WhatsApp na hora, pelo painel (modo de emergência).
 
 ---
 
