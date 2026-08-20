@@ -13,6 +13,8 @@ Eles provam que a medição funciona; **não** projetam resultado de negócio.
 - Tempo de primeira resposta (mediana)
 - Percentual resolvido automaticamente
 - Percentual transferido para humano
+- Espera até a primeira resposta humana (mediana, em minutos)
+- Respostas escritas por atendentes
 - Motivos de contato (por intenção)
 
 ### Comercial

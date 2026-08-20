@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
 interface Item {
@@ -55,6 +56,7 @@ export function Fila() {
             <th>Resumo (mascarado)</th>
             <th>Status</th>
             <th>Ação</th>
+            <th>Atender</th>
           </tr>
         </thead>
         <tbody>
@@ -84,6 +86,9 @@ export function Fila() {
                   </button>
                 )}
                 {i.status === 'resolvido' && <span style={{ color: 'var(--suave)' }}>—</span>}
+              </td>
+              <td>
+                <Link href={`/conversas/${i.conversaId}`}>Abrir conversa</Link>
               </td>
             </tr>
           ))}

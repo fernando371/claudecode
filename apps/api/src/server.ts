@@ -8,6 +8,7 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { config, db, envioRealPermitido, log, popular } from '@fdc/core';
 import { exigirAcessoAdministrativo } from './seguranca.js';
+import { rotasAtendimento } from './routes/atendimento.js';
 import { rotasPainel } from './routes/painel.js';
 import { rotasSimulador } from './routes/simulador.js';
 import { rotasWebhook } from './routes/webhook.js';
@@ -94,6 +95,7 @@ export async function criarServidor() {
   await app.register(rotasWebhook);
   await app.register(rotasSimulador);
   await app.register(rotasPainel);
+  await app.register(rotasAtendimento);
 
   return app;
 }

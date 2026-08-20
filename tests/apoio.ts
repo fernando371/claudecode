@@ -31,6 +31,7 @@ import {
 import type { RespostaAgente } from '@fdc/shared';
 
 const TABELAS = [
+  'notas_conversa',
   'mensagens',
   'conversas',
   'mensagens_processadas',

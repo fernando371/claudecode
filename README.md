@@ -43,8 +43,10 @@ Para parar, aperte `Ctrl + C` no terminal.
    tentativa de acessar pedido de outra pessoa, tentativa de burlar o agente.
 3. Ver, em cada resposta, **qual intenção foi detectada, quais fontes foram usadas,
    quais regras foram acionadas** e se houve transferência para atendente.
-4. Acompanhar a fila de atendimento humano, os indicadores e a trilha de auditoria.
-5. Desligar a IA ou o WhatsApp na hora, pelo painel (modo de emergência).
+4. Acompanhar a fila de atendimento humano e, dentro dela, **abrir a conversa, ler o
+   histórico e responder o cliente como atendente**.
+5. Acompanhar os indicadores e a trilha de auditoria.
+6. Desligar a IA ou o WhatsApp na hora, pelo painel (modo de emergência).
 
 ---
 
@@ -53,7 +55,7 @@ Para parar, aperte `Ctrl + C` no terminal.
 | Comando              | O que faz                                                      |
 | -------------------- | -------------------------------------------------------------- |
 | `npm run dev`        | Liga o painel e a API                                          |
-| `npm test`           | Roda os 89 testes automatizados                                |
+| `npm test`           | Roda os 105 testes automatizados                               |
 | `npm run build`      | Confere o projeto inteiro e compila o painel                   |
 | `npm run check:all`  | Roda formatação, lint, tipos, testes e verificação de segredos |
 | `npm run db:reset`   | Recria os dados fictícios de demonstração                      |

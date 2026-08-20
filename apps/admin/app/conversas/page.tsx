@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { buscar, temErro } from '@/lib/api';
 import { Aviso } from '@/components/Aviso';
 import { Tabela } from '@/components/Tabela';
@@ -27,13 +28,16 @@ export default async function Pagina() {
       <p className="descricao">Todas as conversas processadas pelo agente neste ambiente.</p>
       <div className="bloco">
         <Tabela
-          colunas={['Início', 'Canal', 'Cliente', 'Mensagens', 'Atendente']}
+          colunas={['Início', 'Canal', 'Cliente', 'Mensagens', 'Atendente', 'Abrir']}
           linhas={conversas.map((c) => [
             new Date(c.iniciadaEm).toLocaleString('pt-BR'),
             c.canal,
             c.clienteId,
             c.totalMensagens,
             c.assumidaPor ?? '—',
+            <Link key={c.id} href={`/conversas/${c.id}`}>
+              Atender
+            </Link>,
           ])}
         />
       </div>

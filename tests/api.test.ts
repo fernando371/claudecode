@@ -208,3 +208,68 @@ describe('API — controle de acesso do painel', () => {
     limparCacheConfig();
   });
 });
+
+describe('API — atendimento humano', () => {
+  async function conversaEscalonada(): Promise<string> {
+    const r = await app.inject({
+      method: 'POST',
+      url: '/simulador/mensagem',
+      payload: { texto: 'passei mal depois de tomar o produto' },
+    });
+    return r.json().conversaId as string;
+  }
+
+  it('entrega o histórico da conversa para o atendente', async () => {
+    const id = await conversaEscalonada();
+    const r = await app.inject({ method: 'GET', url: `/conversas/${id}` });
+    expect(r.statusCode).toBe(200);
+    const corpo = r.json();
+    expect(corpo.fila[0].motivo).toBe('reacao_adversa');
+    expect(JSON.stringify(corpo)).not.toContain('ana.exemplo@exemplo.invalido');
+  });
+
+  it('devolve 404 para conversa inexistente', async () => {
+    const r = await app.inject({ method: 'GET', url: '/conversas/conv_nao_existe' });
+    expect(r.statusCode).toBe(404);
+  });
+
+  it('envia a resposta do atendente e devolve a conversa ao agente', async () => {
+    const id = await conversaEscalonada();
+
+    const resposta = await app.inject({
+      method: 'POST',
+      url: `/conversas/${id}/responder`,
+      payload: { texto: 'Oi, sou a Marina do time da FDC.', atendente: 'Marina' },
+    });
+    expect(resposta.statusCode).toBe(200);
+    expect(resposta.json().mensagem.autor).toBe('atendente');
+
+    const nota = await app.inject({
+      method: 'POST',
+      url: `/conversas/${id}/anotar`,
+      payload: { texto: 'Conferir o lote com a produção.', atendente: 'Marina' },
+    });
+    expect(nota.statusCode).toBe(200);
+
+    const encerrar = await app.inject({
+      method: 'POST',
+      url: `/conversas/${id}/encerrar`,
+      payload: { atendente: 'Marina' },
+    });
+    expect(encerrar.statusCode).toBe(200);
+
+    const depois = await app.inject({ method: 'GET', url: `/conversas/${id}` });
+    expect(depois.json().conversa.assumidaPor).toBeNull();
+    expect(depois.json().notas).toHaveLength(1);
+  });
+
+  it('recusa resposta vazia', async () => {
+    const id = await conversaEscalonada();
+    const r = await app.inject({
+      method: 'POST',
+      url: `/conversas/${id}/responder`,
+      payload: { texto: '' },
+    });
+    expect(r.statusCode).toBe(400);
+  });
+});

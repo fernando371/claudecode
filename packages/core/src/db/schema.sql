@@ -42,6 +42,18 @@ CREATE TABLE IF NOT EXISTS mensagens (
 
 CREATE INDEX IF NOT EXISTS idx_mensagens_conversa ON mensagens(conversa_id);
 
+-- Anotacoes internas do atendente. NUNCA sao enviadas ao cliente.
+CREATE TABLE IF NOT EXISTS notas_conversa (
+  id            TEXT PRIMARY KEY,
+  conversa_id   TEXT NOT NULL,
+  atendente     TEXT NOT NULL,
+  texto         TEXT NOT NULL,
+  criado_em     TEXT NOT NULL,
+  FOREIGN KEY (conversa_id) REFERENCES conversas(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_notas_conversa ON notas_conversa(conversa_id);
+
 -- Idempotencia de webhook: impede processar a mesma mensagem duas vezes.
 CREATE TABLE IF NOT EXISTS mensagens_processadas (
   id_externo    TEXT PRIMARY KEY,

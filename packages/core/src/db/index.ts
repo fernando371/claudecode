@@ -33,12 +33,24 @@ export function db(caminho?: string): DatabaseSync {
   const conexao = new Sqlite(alvo);
   const sql = readFileSync(resolve(PASTA_ATUAL, 'schema.sql'), 'utf8');
   conexao.exec(sql);
+  migrar(conexao);
   instancia = conexao;
   caminhoAtual = alvo;
   return conexao;
 }
 
 /** Banco isolado em memoria: usado pelos testes automatizados. */
+/**
+ * Migracoes simples: adiciona colunas que passaram a existir depois que
+ * um banco ja havia sido criado. Roda sempre e nunca apaga nada.
+ */
+function migrar(conexao: DatabaseSync): void {
+  const colunas = conexao.prepare('PRAGMA table_info(mensagens)').all() as Array<{ name: string }>;
+  if (!colunas.some((c) => c.name === 'autor')) {
+    conexao.exec("ALTER TABLE mensagens ADD COLUMN autor TEXT NOT NULL DEFAULT 'agente'");
+  }
+}
+
 export function bancoEmMemoria(): DatabaseSync {
   return db(':memory:');
 }

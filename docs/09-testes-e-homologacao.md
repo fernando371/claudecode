@@ -7,7 +7,7 @@ npm test            # roda os 89 testes
 npm run check:all   # formatação + lint + tipos + testes + segredos
 ```
 
-Nenhum teste depende de credencial, internet ou serviço pago.
+São **105 testes**. Nenhum depende de credencial, internet ou serviço pago.
 
 ## Os 25 cenários obrigatórios
 
@@ -47,7 +47,11 @@ Todos implementados em `tests/cenarios.test.ts` e **passando**:
   da Meta, regras de saúde, prompt injection, identificação de pedido, regra de
   atraso, lista fechada de ferramentas, campanhas e consentimento, base de
   conhecimento, classificação de intenção.
-- **Integração da API (15):** verificação e assinatura do webhook, simulador,
+- **Atendimento humano (12):** leitura do histórico com mascaramento, resposta do
+  atendente, silêncio da IA durante o atendimento, anotações internas, encerramento
+  e devolução ao agente, e a garantia de que a resposta humana também não escapa da
+  trava de envio real.
+- **Integração da API (19):** verificação e assinatura do webhook, simulador,
   ausência de segredos nas respostas, mascaramento dos pedidos e controle de acesso
   do painel (incluindo o bloqueio em produção sem senha).
 
@@ -61,7 +65,10 @@ Antes de qualquer piloto real, percorra no **Simulador de Conversas**:
 - [ ] Uma menção a gravidez, uma a medicamento e uma a reação adversa.
 - [ ] Shopify fora do ar, SAP fora do ar e transportadora sem status.
 - [ ] Uma tentativa de burlar o agente.
-- [ ] Assumir e encerrar uma conversa pela fila de atendimento.
+- [ ] Abrir uma conversa pela fila, **responder como atendente** e conferir que a
+      resposta aparece no simulador (botão **Atualizar**).
+- [ ] Deixar uma anotação interna e confirmar que ela **não** aparece para o cliente.
+- [ ] Encerrar o atendimento e confirmar que a IA volta a responder.
 - [ ] Ligar e desligar o modo de emergência.
 
 Ao final, confira a aba **Eventos de auditoria** e verifique que nenhum dado

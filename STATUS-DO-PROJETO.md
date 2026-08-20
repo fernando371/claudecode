@@ -52,18 +52,32 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 - Modo de emergência: desligar a IA, desligar o WhatsApp ou forçar atendimento
   somente humano — com efeito imediato.
 
+### Atendimento humano
+
+- Fila com motivo, prioridade e situação de cada conversa transferida.
+- Tela de atendimento: a pessoa **lê o histórico completo** (com dados pessoais
+  mascarados), vê **por que** a conversa foi transferida e **responde o cliente**.
+- Anotações internas da equipe, que **nunca** são enviadas ao cliente.
+- Enquanto a conversa está com uma pessoa, a IA fica em silêncio; ao encerrar,
+  a conversa volta para o agente automático.
+- A resposta humana também respeita a trava de envio real do WhatsApp.
+- Toda resposta, anotação e encerramento fica registrado na auditoria.
+- Indicadores: espera até a primeira resposta humana e total de respostas de atendentes.
+
 ### Painel e simulador
 
 - **Simulador de Conversas** com cliente fictício, pedido fictício, diagnóstico da
   resposta (intenção, fontes, regras, transferência) e botões para simular falhas de
   Shopify, SAP e transportadora.
+- O simulador mostra as respostas escritas por atendentes, permitindo testar o
+  atendimento humano de ponta a ponta sem sair do computador.
 - Telas: visão geral, conversas, base de conhecimento, produtos, pedidos, fila de
   atendimento humano, indicadores, consentimentos, auditoria, status das integrações
   e configurações.
 
 ### Qualidade
 
-- **89 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
+- **105 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
 - Verificação de tipos, lint, formatação e verificação de segredos, todos limpos.
 - Nenhum teste depende de credencial, internet ou serviço pago.
 
@@ -98,7 +112,8 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 - Gerar pacote compilado ou imagem Docker para produção (ADR 0003).
 - Incluir testes de navegador (Playwright) quando o painel tiver operação crítica (ADR 0004).
 - Fila de processamento dedicada quando o volume de mensagens crescer.
-- Autenticação do painel com usuários individuais (hoje é um acesso único).
+- Autenticação do painel com usuários individuais (hoje é um acesso único e o nome
+  do atendente é digitado à mão).
 - Rotina automática de expurgo pela política de retenção (hoje a política é
   configurável e exibida, mas o expurgo ainda é manual).
 

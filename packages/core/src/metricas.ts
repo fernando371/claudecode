@@ -11,6 +11,8 @@ export interface Indicadores {
   totalConversas: number;
   totalMensagens: number;
   tempoPrimeiraRespostaMsMediana: number | null;
+  tempoPrimeiraRespostaHumanaMinutosMediana: number | null;
+  mensagensDeAtendentes: number;
   percentualResolvidoAutomaticamente: number;
   percentualTransferidoHumano: number;
   motivosDeContato: Array<{ intencao: string; total: number }>;
@@ -40,8 +42,20 @@ export function calcularIndicadores(): Indicadores {
   const saidas = todasMensagens.filter((m) => m.direcao === 'saida');
   const contagens = eventos.contarPorTipo();
 
-  const transferidas = saidas.filter((m) => m.escalonado).length;
-  const total = saidas.length || 1;
+  const respostasDoAgente = saidas.filter((m) => m.autor !== 'atendente');
+  const transferidas = respostasDoAgente.filter((m) => m.escalonado).length;
+  const total = respostasDoAgente.length || 1;
+
+  // Tempo entre a entrada na fila e a primeira resposta escrita por uma pessoa.
+  const esperasEmMinutos: number[] = [];
+  for (const item of filaHumana.listar()) {
+    const primeiraHumana = mensagens
+      .porConversa(item.conversaId)
+      .find((m) => m.autor === 'atendente' && m.criadoEm >= item.criadoEm);
+    if (!primeiraHumana) continue;
+    const espera = Date.parse(primeiraHumana.criadoEm) - Date.parse(item.criadoEm);
+    if (Number.isFinite(espera) && espera >= 0) esperasEmMinutos.push(Math.round(espera / 60000));
+  }
 
   const motivos = Object.entries(contagens)
     .filter(([tipo]) => tipo.startsWith('intencao:'))
@@ -63,8 +77,10 @@ export function calcularIndicadores(): Indicadores {
     totalConversas: todasConversas.length,
     totalMensagens: todasMensagens.length,
     tempoPrimeiraRespostaMsMediana: mediana(
-      saidas.map((m) => m.duracaoMs ?? 0).filter((v) => v > 0),
+      respostasDoAgente.map((m) => m.duracaoMs ?? 0).filter((v) => v > 0),
     ),
+    tempoPrimeiraRespostaHumanaMinutosMediana: mediana(esperasEmMinutos),
+    mensagensDeAtendentes: saidas.filter((m) => m.autor === 'atendente').length,
     percentualResolvidoAutomaticamente: Number((((total - transferidas) / total) * 100).toFixed(1)),
     percentualTransferidoHumano: Number(((transferidas / total) * 100).toFixed(1)),
     motivosDeContato: motivos,

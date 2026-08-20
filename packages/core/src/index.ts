@@ -35,6 +35,7 @@ export * from './providers/whatsapp/meta.js';
 export * from './agent/intencoes.js';
 export * from './agent/ferramentas.js';
 export * from './agent/orquestrador.js';
+export * from './agent/atendimento.js';
 export * from './agent/respostas.js';
 export * from './metricas.js';
 export * from './campanhas.js';

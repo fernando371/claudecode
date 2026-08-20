@@ -253,3 +253,41 @@ select {
   margin: 0;
   padding-left: 18px;
 }
+
+.autor-balao {
+  font-size: 11.5px;
+  color: var(--suave);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.balao.agente .autor-balao,
+.balao.cliente .autor-balao {
+  opacity: 0.85;
+}
+
+.rotulo-campo {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--suave);
+  margin-bottom: 5px;
+}
+
+.nota {
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-left: 3px solid var(--atencao);
+  border-radius: 6px;
+  padding: 8px 11px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}

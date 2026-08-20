@@ -128,6 +128,24 @@ Agente: confirma e avisa que continua disponível para dúvidas de pedido
 
 ---
 
+## Fluxo 9 — O atendente assume e responde
+
+```
+   ↓ conversa transferida entra na Fila de atendimento
+Atendente: abre a conversa no painel
+   ↓ vê o histórico completo (dados pessoais mascarados) e o motivo da transferência
+Atendente: escreve a resposta → o cliente recebe
+   ↓ a IA fica em silêncio enquanto a pessoa está no comando
+Atendente: encerra → a conversa volta para o agente automático
+```
+
+O atendente também pode deixar **anotações internas**, que ficam só no painel e
+**nunca** são enviadas ao cliente.
+
+A resposta escrita por uma pessoa passa pelo mesmo canal do agente — ou seja,
+**também respeita a trava de envio real do WhatsApp**. No ambiente simulado ela fica
+registrada no histórico e na caixa de saída de teste, sem sair para lugar nenhum.
+
 ## Quando a conversa está com um atendente
 
 Enquanto um atendente estiver com a conversa, **a IA não responde nada**. Ao encerrar

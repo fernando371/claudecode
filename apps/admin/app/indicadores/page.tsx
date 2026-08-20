@@ -6,6 +6,8 @@ interface Indicadores {
   totalConversas: number;
   totalMensagens: number;
   tempoPrimeiraRespostaMsMediana: number | null;
+  tempoPrimeiraRespostaHumanaMinutosMediana: number | null;
+  mensagensDeAtendentes: number;
   percentualResolvidoAutomaticamente: number;
   percentualTransferidoHumano: number;
   motivosDeContato: Array<{ intencao: string; total: number }>;
@@ -41,6 +43,13 @@ export default async function Pagina() {
     ],
     ['Resolvido automaticamente', `${i.percentualResolvidoAutomaticamente}%`],
     ['Transferido para humano', `${i.percentualTransferidoHumano}%`],
+    [
+      'Espera até a resposta humana (mediana)',
+      i.tempoPrimeiraRespostaHumanaMinutosMediana === null
+        ? '—'
+        : `${i.tempoPrimeiraRespostaHumanaMinutosMediana} min`,
+    ],
+    ['Respostas escritas por atendentes', i.mensagensDeAtendentes],
     ['Consultas sobre atraso', i.consultasSobreAtraso],
     ['Links de produto/carrinho', i.cliquesEmProdutosOuCarrinhos],
     ['Conversões assistidas (simul.)', i.conversoesAssistidasSimuladas],

@@ -30,6 +30,13 @@ interface PedidoFicticio {
 
 type Falhas = Record<string, boolean>;
 
+interface MensagemHistorico {
+  id: string;
+  autor: 'cliente' | 'agente' | 'atendente';
+  texto: string;
+  criadoEm: string;
+}
+
 const INTERRUPTORES: Array<[string, string]> = [
   ['catalogoIndisponivel', 'Shopify (catálogo) fora do ar'],
   ['pedidosIndisponivel', 'Shopify (pedidos) fora do ar'],
@@ -70,9 +77,10 @@ export function Simulador() {
   const [remetente, setRemetente] = useState('+5511900000001');
   const [texto, setTexto] = useState('');
   const [conversaId, setConversaId] = useState<string | undefined>();
-  const [historico, setHistorico] = useState<Array<{ de: 'cliente' | 'agente'; texto: string }>>(
-    [],
-  );
+  const [historico, setHistorico] = useState<
+    Array<{ de: 'cliente' | 'agente' | 'atendente'; texto: string }>
+  >([]);
+  const [comAtendente, setComAtendente] = useState(false);
   const [ultima, setUltima] = useState<Resposta | null>(null);
   const [falhas, setFalhas] = useState<Falhas>({});
   const [ocupado, setOcupado] = useState(false);
@@ -93,6 +101,30 @@ export function Simulador() {
     fimDaConversa.current?.scrollIntoView({ behavior: 'smooth' });
   }, [historico]);
 
+  /**
+   * Recarrega a conversa a partir do servidor. É assim que as respostas
+   * escritas por um atendente aparecem aqui para o cliente.
+   */
+  const sincronizar = useCallback(async (id: string) => {
+    const r = await chamar<{
+      conversa?: { assumidaPor: string | null };
+      mensagens?: MensagemHistorico[];
+    }>(`/conversas/${id}`);
+    if (!r.mensagens) return;
+    setComAtendente(Boolean(r.conversa?.assumidaPor));
+    setHistorico(
+      r.mensagens
+        .filter((m) => m.texto.trim() !== '')
+        .map((m) => ({ de: m.autor, texto: m.texto })),
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!conversaId) return;
+    const relogio = setInterval(() => void sincronizar(conversaId), 5000);
+    return () => clearInterval(relogio);
+  }, [conversaId, sincronizar]);
+
   const enviar = useCallback(
     async (mensagem: string) => {
       const conteudo = mensagem.trim();
@@ -112,7 +144,7 @@ export function Simulador() {
         } else {
           setConversaId(r.conversaId);
           setUltima(r);
-          if (r.texto) setHistorico((h) => [...h, { de: 'agente', texto: r.texto }]);
+          await sincronizar(r.conversaId);
         }
       } catch {
         setErro('Não foi possível falar com a API. Ela está rodando?');
@@ -120,7 +152,7 @@ export function Simulador() {
         setOcupado(false);
       }
     },
-    [conversaId, ocupado, remetente],
+    [conversaId, ocupado, remetente, sincronizar],
   );
 
   const reiniciar = useCallback(async () => {
@@ -129,6 +161,7 @@ export function Simulador() {
     setHistorico([]);
     setUltima(null);
     setErro(null);
+    setComAtendente(false);
     setFalhas(await chamar<Falhas>('/simulador/falhas'));
   }, [conversaId]);
 
@@ -149,11 +182,24 @@ export function Simulador() {
           )}
           {historico.map((m, i) => (
             <div key={i} className={m.de === 'cliente' ? 'balao cliente' : 'balao agente'}>
+              {m.de !== 'cliente' && (
+                <div className="autor-balao">
+                  {m.de === 'atendente' ? 'Atendente' : 'Agente (IA)'}
+                </div>
+              )}
               {m.texto}
             </div>
           ))}
           <div ref={fimDaConversa} />
         </div>
+
+        {comAtendente && (
+          <div className="aviso">
+            Esta conversa está com um atendente humano. O agente automático não responde enquanto
+            isso. Abra a <strong>Fila de atendimento</strong> em outra aba para responder como
+            atendente e clique em <strong>Atualizar</strong> aqui.
+          </div>
+        )}
 
         {erro && <div className="aviso erro">{erro}</div>}
 
@@ -173,6 +219,13 @@ export function Simulador() {
           />
           <button className="principal" type="submit" disabled={ocupado || !texto.trim()}>
             Enviar
+          </button>
+          <button
+            type="button"
+            onClick={() => conversaId && void sincronizar(conversaId)}
+            disabled={!conversaId}
+          >
+            Atualizar
           </button>
           <button type="button" onClick={() => void reiniciar()}>
             Reiniciar

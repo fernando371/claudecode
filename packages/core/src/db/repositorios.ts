@@ -142,15 +142,20 @@ export const conversas = {
     }));
   },
   apagar(id: string): void {
+    db().prepare('DELETE FROM notas_conversa WHERE conversa_id = ?').run(id);
     db().prepare('DELETE FROM mensagens WHERE conversa_id = ?').run(id);
+    db().prepare('DELETE FROM fila_humana WHERE conversa_id = ?').run(id);
     db().prepare('DELETE FROM conversas WHERE id = ?').run(id);
   },
 };
+
+export type AutorMensagem = 'cliente' | 'agente' | 'atendente';
 
 export interface MensagemRegistro {
   id: string;
   conversaId: string;
   direcao: 'entrada' | 'saida';
+  autor: AutorMensagem;
   texto: string;
   intencao: string | null;
   confianca: number | null;
@@ -168,6 +173,7 @@ export const mensagens = {
     return inserirMensagem({
       conversaId,
       direcao: 'entrada',
+      autor: 'cliente',
       texto: conteudo,
       intencao: null,
       confianca: null,
@@ -183,6 +189,7 @@ export const mensagens = {
     return inserirMensagem({
       conversaId: resposta.conversaId,
       direcao: 'saida',
+      autor: 'agente',
       texto: resposta.texto,
       intencao: resposta.intencao,
       confianca: resposta.confianca,
@@ -192,6 +199,23 @@ export const mensagens = {
       motivoEscalonamento: resposta.motivoEscalonamento,
       bloqueadoSeguranca: resposta.bloqueadoPorSeguranca,
       duracaoMs: resposta.duracaoMs,
+    });
+  },
+  /** Resposta escrita por uma pessoa do atendimento, nao pela IA. */
+  registrarAtendente(conversaId: string, texto: string, atendente: string): MensagemRegistro {
+    return inserirMensagem({
+      conversaId,
+      direcao: 'saida',
+      autor: 'atendente',
+      texto,
+      intencao: null,
+      confianca: null,
+      fontes: [],
+      regras: [`atendimento:resposta_humana:${atendente}`],
+      escalonado: false,
+      motivoEscalonamento: null,
+      bloqueadoSeguranca: false,
+      duracaoMs: null,
     });
   },
   porConversa(conversaId: string): MensagemRegistro[] {
@@ -212,14 +236,15 @@ function inserirMensagem(m: Omit<MensagemRegistro, 'id' | 'criadoEm'>): Mensagem
   const registro: MensagemRegistro = { ...m, id: novoId('msg'), criadoEm: agora() };
   db()
     .prepare(
-      `INSERT INTO mensagens (id, conversa_id, direcao, texto, intencao, confianca, fontes, regras,
+      `INSERT INTO mensagens (id, conversa_id, direcao, autor, texto, intencao, confianca, fontes, regras,
         escalonado, motivo_escalonamento, bloqueado_seguranca, duracao_ms, criado_em)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     )
     .run(
       registro.id,
       registro.conversaId,
       registro.direcao,
+      registro.autor,
       registro.texto,
       registro.intencao,
       registro.confianca,
@@ -239,6 +264,8 @@ function mapearMensagem(l: Linha): MensagemRegistro {
     id: texto(l, 'id'),
     conversaId: texto(l, 'conversa_id'),
     direcao: texto(l, 'direcao') as 'entrada' | 'saida',
+    autor: (textoOuNulo(l, 'autor') ??
+      (texto(l, 'direcao') === 'entrada' ? 'cliente' : 'agente')) as AutorMensagem,
     texto: texto(l, 'texto'),
     intencao: textoOuNulo(l, 'intencao'),
     confianca: l['confianca'] === null ? null : numero(l, 'confianca'),
@@ -251,6 +278,46 @@ function mapearMensagem(l: Linha): MensagemRegistro {
     criadoEm: texto(l, 'criado_em'),
   };
 }
+
+export interface NotaConversa {
+  id: string;
+  conversaId: string;
+  atendente: string;
+  texto: string;
+  criadoEm: string;
+}
+
+/** Anotacoes internas do atendimento. Nunca sao enviadas ao cliente. */
+export const notasConversa = {
+  criar(conversaId: string, atendente: string, conteudo: string): NotaConversa {
+    const registro: NotaConversa = {
+      id: novoId('nota'),
+      conversaId,
+      atendente,
+      texto: mascararTexto(conteudo).slice(0, 1000),
+      criadoEm: agora(),
+    };
+    db()
+      .prepare(
+        'INSERT INTO notas_conversa (id, conversa_id, atendente, texto, criado_em) VALUES (?,?,?,?,?)',
+      )
+      .run(registro.id, registro.conversaId, registro.atendente, registro.texto, registro.criadoEm);
+    return registro;
+  },
+  porConversa(conversaId: string): NotaConversa[] {
+    return (
+      db()
+        .prepare('SELECT * FROM notas_conversa WHERE conversa_id = ? ORDER BY criado_em')
+        .all(conversaId) as Linha[]
+    ).map((l) => ({
+      id: texto(l, 'id'),
+      conversaId: texto(l, 'conversa_id'),
+      atendente: texto(l, 'atendente'),
+      texto: texto(l, 'texto'),
+      criadoEm: texto(l, 'criado_em'),
+    }));
+  },
+};
 
 // ---------------------------------------------------------------------------
 // Idempotencia de webhook
