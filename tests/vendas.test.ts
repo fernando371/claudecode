@@ -5,6 +5,7 @@ import {
   auditoria,
   carregarFonteCombinacoes,
   metricas,
+  pedidoDeMarketplace,
   preverRecompra,
   simulacao,
   sugerirCombinacoes,
@@ -37,12 +38,13 @@ describe('Fonte das combinações', () => {
 
   it('não repete o que o cliente já tem', () => {
     const { sugestoes } = sugerirCombinacoes(['DEMO-VITC-60', 'DEMO-VITD-60']);
-    expect(sugestoes.every((s) => !['DEMO-VITC-60', 'DEMO-VITD-60'].includes(s.sku))).toBe(true);
+    const sugeridos = sugestoes.flatMap((s) => s.skus);
+    expect(sugeridos.every((sku) => !['DEMO-VITC-60', 'DEMO-VITD-60'].includes(sku))).toBe(true);
   });
 
   it('sugere itens da outra marca (Vitaminas x Nutrition)', () => {
     const { sugestoes } = sugerirCombinacoes(['DEMO-WHEY-900-BAU'], { limite: 3 });
-    expect(sugestoes.map((s) => s.sku)).toContain('DEMO-VITD-60');
+    expect(sugestoes.flatMap((s) => s.skus)).toContain('DEMO-VITD-60');
   });
 });
 
@@ -153,6 +155,81 @@ describe('Recompra', () => {
     const r = await conversar('quero comprar de novo', { remetente: '+5511988886666' });
     expect(r.texto).toContain('Não encontrei uma compra anterior');
     expect(r.regrasAcionadas).toContain('recompra:numero_nao_reconhecido');
+  });
+});
+
+describe('Combinações reais da loja (dados de venda)', () => {
+  it('trabalha por família, não por tamanho de frasco', () => {
+    const fonte = carregarFonteCombinacoes();
+    // Vários SKUs de Ômega-3 caem na mesma família.
+    expect(fonte.familiaPorSku.get('200564')).toBe('Ômega-3');
+    expect(fonte.familiaPorSku.get('KIT-200622-2UN')).toBe('Ômega-3');
+    expect(fonte.familiaPorSku.get('200585')).toBe('Ômega-3');
+  });
+
+  it('não sugere Ômega-3 para quem já está levando Ômega-3 em outro frasco', () => {
+    const { sugestoes } = sugerirCombinacoes(['KIT-200622-2UN'], { limite: 5 });
+    expect(sugestoes.every((s) => s.familia !== 'Ômega-3')).toBe(true);
+  });
+
+  it('sugere a dupla mais comprada junto na loja', () => {
+    // Coenzima Q10 + Ômega-3 é o par mais frequente nas cestas reais.
+    const { sugestoes } = sugerirCombinacoes(['200619'], { limite: 1 });
+    expect(sugestoes[0]?.familia).toBe('Ômega-3');
+    expect(sugestoes[0]?.skus.length).toBeGreaterThan(1);
+  });
+
+  it('o motivo mostrado ao cliente não faz promessa de saúde', () => {
+    const fonte = carregarFonteCombinacoes();
+    const proibido = [
+      'cura',
+      'trata',
+      'previne',
+      'imunidade',
+      'emagrec',
+      'melhora',
+      'fortalece',
+      'combate',
+      'reduz',
+      'ajuda a',
+      'indicado para',
+    ];
+    for (const c of fonte.combinacoes) {
+      const motivo = c.motivo.toLowerCase();
+      for (const palavra of proibido) {
+        expect(motivo).not.toContain(palavra);
+      }
+    }
+  });
+
+  it('só cadastra duração de produto em que a FDC informa os dias', () => {
+    const fonte = carregarFonteCombinacoes();
+    // A FDC informa no próprio título: Complexo B = 100 dias, Zinco = 90 dias.
+    expect(fonte.duracaoPorSku.get('200630')).toBe(100);
+    expect(fonte.duracaoPorSku.get('200647')).toBe(90);
+    // Vitamina C não informa a duração: não pode ser chutada.
+    expect(fonte.duracaoPorSku.has('200481')).toBe(false);
+  });
+});
+
+describe('Proteção de marketplace', () => {
+  it('reconhece pedido vindo de marketplace', () => {
+    expect(
+      pedidoDeMarketplace([
+        { sku: null, titulo: 'Vitamina C 1000mg ... FDC Importado EUA (Not linked to Shopify)' },
+        { sku: null, titulo: 'Order Adjustment: Shopee Rebate' },
+      ]),
+    ).toBe(true);
+  });
+
+  it('não confunde pedido normal do site com marketplace', () => {
+    expect(pedidoDeMarketplace([{ sku: '200564', titulo: 'Ômega 3 FDC 1.000mg - 140 Unid' }])).toBe(
+      false,
+    );
+  });
+
+  it('não trata item sem SKU como marketplace se o título for normal', () => {
+    expect(pedidoDeMarketplace([{ sku: null, titulo: 'Produto novo sem SKU' }])).toBe(false);
   });
 });
 

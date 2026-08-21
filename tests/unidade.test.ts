@@ -14,6 +14,7 @@ import {
   executarFerramenta,
   extrairIdentificacao,
   higienizarEntrada,
+  LIMITE_FERRAMENTAS_POR_MENSAGEM,
   limparCacheConfig,
   MetaWhatsAppCloudProvider,
   podeEnviarAtivo,
@@ -290,7 +291,10 @@ describe('Lista fechada de ferramentas', () => {
   });
 
   it('respeita o limite de ferramentas por mensagem', async () => {
-    const contexto = { ...ctx(), usadas: ['a', 'b', 'c', 'd', 'e', 'f'] };
+    const contexto = {
+      ...ctx(),
+      usadas: Array.from({ length: LIMITE_FERRAMENTAS_POR_MENSAGEM }, (_, i) => `t${i}`),
+    };
     const r = await executarFerramenta(contexto, 'buscar_produto', { termo: 'vitamina' });
     expect(r.ok).toBe(false);
   });

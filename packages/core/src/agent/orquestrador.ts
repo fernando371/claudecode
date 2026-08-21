@@ -29,6 +29,7 @@ import {
   type DadosIdentificacao,
 } from '../policies/autenticacaoPedido.js';
 import { exigeAtendimentoHumano } from '../policies/emergencia.js';
+import { pedidoDeMarketplace, RECOMPRA_EM_MARKETPLACE } from '../policies/marketplace.js';
 import {
   pediuDescadastro,
   processarDescadastro,
@@ -534,7 +535,7 @@ async function montarCrossSell(
 
   const { fonte, sugestoes } = r.dados as {
     fonte: { utilizavel: boolean; motivoIndisponivel: string | null; referencia: string };
-    sugestoes: Array<{ sku: string; motivo: string }>;
+    sugestoes: Array<{ familia: string; skus: string[]; motivo: string }>;
   };
 
   if (!fonte.utilizavel) {
@@ -546,26 +547,27 @@ async function montarCrossSell(
     return '';
   }
 
+  // Cada sugestão é uma FAMÍLIA; tentamos os SKUs dela até achar um com estoque.
   let escolhida: { sku: string; motivo: string; titulo: string; precoCentavos: number } | null =
     null;
-  for (const sugestao of sugestoes) {
-    const detalhe = await executarFerramenta(ctx, 'detalhar_produto', { sku: sugestao.sku });
-    if (!detalhe.ok) continue;
-    const produto = detalhe.dados as Produto;
-    const variante = produto.variantes.find(
-      (v) => v.sku.toUpperCase() === sugestao.sku.toUpperCase(),
-    );
-    if (!variante?.disponivel) {
-      acumulador.regras.push('crossell:sugestao_sem_estoque_descartada');
-      continue;
+  busca: for (const sugestao of sugestoes) {
+    for (const sku of sugestao.skus) {
+      const detalhe = await executarFerramenta(ctx, 'detalhar_produto', { sku });
+      if (!detalhe.ok) continue;
+      const produto = detalhe.dados as Produto;
+      const variante = produto.variantes.find((v) => v.sku.toUpperCase() === sku.toUpperCase());
+      if (!variante?.disponivel) {
+        acumulador.regras.push('crossell:sugestao_sem_estoque_descartada');
+        continue;
+      }
+      escolhida = {
+        sku,
+        motivo: sugestao.motivo,
+        titulo: produto.titulo,
+        precoCentavos: variante.precoCentavos,
+      };
+      break busca;
     }
-    escolhida = {
-      sku: sugestao.sku,
-      motivo: sugestao.motivo,
-      titulo: produto.titulo,
-      precoCentavos: variante.precoCentavos,
-    };
-    break;
   }
 
   if (!escolhida) return '';
@@ -733,6 +735,13 @@ async function rotaRecompra(
     criadoEm: string;
     itens: Array<{ sku: string; titulo: string; quantidade: number }>;
   };
+  // Regra de canal: pedido de marketplace não vira oferta de recompra no site.
+  if (pedidoDeMarketplace(pedido.itens.map((i) => ({ sku: i.sku, titulo: i.titulo })))) {
+    acumulador.regras.push('marketplace:recompra_nao_oferecida');
+    metricas.registrar('pedido_de_marketplace', { conversaId: ctx.conversaId });
+    return responder(RECOMPRA_EM_MARKETPLACE);
+  }
+
   acumulador.fontes.push({ tipo: 'pedido', referencia: `último pedido ${pedido.numero}` });
   auditoria.registrar({
     ator: `agente:${ctx.clienteId}`,

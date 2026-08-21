@@ -26,20 +26,38 @@ Lista curta do que **depende de você**. Nada aqui pode ser feito por mim sozinh
 
 ---
 
-## 1b. Aprovar as combinações de produtos e os prazos de duração
+## 1b. Aprovar as combinações de produtos — PESQUISA FEITA, FALTA SÓ SEU "SIM"
 
-- **O que é:** a tabela que diz quais produtos podem ser sugeridos juntos, e quantos
-  dias cada embalagem dura.
-- **Por que precisamos:** o agente **só sugere combinação que esteja nessa tabela**.
-  Hoje ela está preenchida com exemplos e marcada como rascunho — funciona no
-  simulador, mas em produção ele simplesmente não sugere nada.
-- **Onde encontrar:** com o marketing (quais combinações fazem sentido comercialmente)
-  e com o responsável técnico (se a combinação é adequada).
+- **O que é:** a tabela que diz quais produtos o agente pode sugerir juntos.
+- **O que eu já fiz:** em vez de inventar, analisei **250 pedidos pagos reais** da
+  loja (últimos 12 meses) e levantei o que os seus clientes de fato compram juntos.
+  As 18 combinações mais frequentes já estão cadastradas, com os SKUs reais.
+- **Por que ainda depende de você:** o arquivo está como `rascunho`. Enquanto
+  estiver assim, o agente **não sugere nada em produção** — funciona só no
+  simulador. É a trava de governança que combinamos.
 - **Custo:** nenhum.
-- **Pode esperar?** Sim, mas é o que destrava o cross-sell e a recompra.
+- **Pode esperar?** Sim, mas é literalmente uma palavra.
 - **Nunca envie pelo chat:** nada.
-- **Próxima ação exata:** me dizer **duas ou três combinações** que a FDC já usa hoje
-  no site ou no atendimento, para eu cadastrar como ponto de partida.
+- **Próxima ação exata:** olhar a tabela em
+  `data/knowledge/combinacoes-e-recompra.md` e me dizer **"aprovo as combinações"**
+  (ou quais tirar). Eu troco o status para `aprovado` e registro seu nome como
+  responsável.
+
+---
+
+## 1c. Duração dos produtos (para a recompra funcionar melhor)
+
+- **O que é:** quantos dias cada embalagem dura.
+- **O que eu já fiz:** aproveitei os quatro produtos em que a **própria FDC já
+  informa a duração no título** (Magnésio 60 dias, Zinco 90, Complexo B 100,
+  Ômega 3 + CoQ10 30 dias).
+- **Por que ainda falta:** para os outros produtos eu não tenho a porção diária do
+  rótulo, e **não vou chutar**. Sem esse dado a recompra funciona, mas sem a frase
+  "já deve estar acabando".
+- **Custo:** nenhum.
+- **Pode esperar?** Sim.
+- **Próxima ação exata:** me passar a porção diária do rótulo dos mais vendidos
+  (Ômega-3, Vitamina C, Vitamina D3, Coenzima Q10, All Nutri Plus).
 
 ---
 

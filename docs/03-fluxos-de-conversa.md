@@ -197,12 +197,35 @@ O agente só sugere combinação que esteja na tabela aprovada do documento
 `combinacoes-e-recompra.md`. Ele **nunca inventa** combinação e **nunca**
 personaliza a sugestão com informação de saúde que o cliente tenha mencionado.
 
+As combinações não são inventadas: saíram de uma **análise do que os clientes da
+FDC realmente compram juntos** (250 pedidos pagos dos últimos 12 meses). O texto
+mostrado ao cliente fala só de comportamento de compra — "é a dupla mais levada
+junto" — nunca de efeito ou benefício.
+
+O agente trabalha por **família de produto** (Ômega-3, Vitamina C...), não por
+SKU. Assim uma combinação vale para todos os tamanhos de frasco, e ele nunca
+sugere Ômega-3 para quem já está levando Ômega-3 em outra embalagem.
+
 A sugestão é descartada quando:
 
 - alguma regra de segurança de saúde foi acionada (a conversa já foi transferida);
 - o documento de combinações não está aprovado ou está vencido;
 - o produto sugerido está sem estoque;
 - a pergunta era objetiva (preço, estoque) — nesses casos seria empurrar venda.
+
+---
+
+---
+
+## Sobre marketplaces
+
+Os pedidos de marketplace (Shopee, Mercado Livre) entram na mesma loja Shopify,
+mas **sem SKU**, com o título marcado como não vinculado ao catálogo.
+
+Quando a última compra do cliente veio de um marketplace, o agente **não oferece
+recompra nem link do site**. Ele explica que por lá o acompanhamento é feito pelo
+canal do próprio marketplace. Isso respeita as regras de canal e evita desviar
+comprador de plataforma.
 
 ---
 

@@ -91,7 +91,7 @@ export const FERRAMENTAS_POR_INTENCAO: Record<Intencao, readonly NomeFerramenta[
 };
 
 /** Limite de chamadas de ferramenta por mensagem, para conter abuso. */
-export const LIMITE_FERRAMENTAS_POR_MENSAGEM = 6;
+export const LIMITE_FERRAMENTAS_POR_MENSAGEM = 12;
 
 export interface ContextoFerramenta {
   conversaId: string;
