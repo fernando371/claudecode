@@ -174,9 +174,13 @@ Cliente: "acabou o meu, quero comprar de novo"
 Agente: "estes itens já devem estar acabando" + carrinho pronto + aviso de não prescrição
 ```
 
-A duração de cada embalagem vem do documento oficial de combinações. Sem esse
-documento aprovado, o agente ainda mostra a última compra, mas **não afirma** que
-o produto está acabando.
+A duração de cada embalagem vem do **campo oficial cadastrado no próprio produto**
+da loja (`custom.dias_de_uso`). O sistema lê direto de lá, então quando a FDC
+corrige o cadastro o agente já responde certo, sem ninguém mexer em nada.
+
+A tabela do documento de combinações é só um espelho, usada quando o catálogo não
+traz o dado (e pelo simulador). Sem nenhuma das duas, o agente ainda mostra a
+última compra, mas **não afirma** que o produto está acabando.
 
 ---
 

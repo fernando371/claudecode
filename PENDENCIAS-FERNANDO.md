@@ -37,19 +37,38 @@ Lista curta do que **depende de você**. Nada aqui pode ser feito por mim sozinh
 
 ---
 
-## 1c. Duração dos produtos (para a recompra funcionar melhor)
+## 1c. Duração dos produtos — RESOLVIDO
 
-- **O que é:** quantos dias cada embalagem dura.
-- **O que eu já fiz:** aproveitei os quatro produtos em que a **própria FDC já
-  informa a duração no título** (Magnésio 60 dias, Zinco 90, Complexo B 100,
-  Ômega 3 + CoQ10 30 dias).
-- **Por que ainda falta:** para os outros produtos eu não tenho a porção diária do
-  rótulo, e **não vou chutar**. Sem esse dado a recompra funciona, mas sem a frase
-  "já deve estar acabando".
+- **Não precisou de você.** Vocês já tinham o campo `dias_de_uso` cadastrado em
+  cada produto no Shopify. Peguei de lá: 45 produtos com a duração oficial.
+- **Melhor ainda:** o sistema agora lê esse campo **direto da loja**. Quando
+  alguém corrigir o cadastro no Shopify, o agente já responde certo — sem mexer
+  em código, sem me chamar.
+- A tabela no arquivo de combinações virou só um espelho, usada quando o catálogo
+  não traz o dado e pelo simulador.
+
+---
+
+## 1d. Três kits com a duração errada no Shopify — PRECISA DE VOCÊ
+
+- **O que é:** ao cruzar os kits com os frascos individuais, três cadastros estão
+  com o `dias_de_uso` do frasco unitário em vez do kit inteiro:
+
+  | Produto                                      | Está cadastrado | Deveria ser |
+  | -------------------------------------------- | --------------- | ----------- |
+  | Ômega-3 360 Cápsulas · Kit 3 Frascos         | 180 dias        | 540 dias    |
+  | Ômega-3 360 Cápsulas · Kit Família 5 Frascos | 300 dias        | 900 dias    |
+  | Ômega + CoQ10 · 2 unidades                   | 30 dias         | 60 dias     |
+
+- **Por que precisamos:** isso **afeta o seu site**, não só este sistema. Quem
+  compra o Kit Família de 5 frascos vê "300 dias de uso" quando na verdade são 900.
+- **Onde corrigir:** no Shopify, no metacampo `dias_de_uso` de cada um desses três
+  produtos.
 - **Custo:** nenhum.
-- **Pode esperar?** Sim.
-- **Próxima ação exata:** me passar a porção diária do rótulo dos mais vendidos
-  (Ômega-3, Vitamina C, Vitamina D3, Coenzima Q10, All Nutri Plus).
+- **Pode esperar?** Não muito — é informação errada exibida ao cliente hoje.
+- **Nunca envie pelo chat:** nada.
+- **Próxima ação exata:** pedir para quem cuida do cadastro corrigir esses três.
+  **Eu não alterei nada no Shopify** — só reportei. Se você me autorizar, eu corrijo.
 
 ---
 

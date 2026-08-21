@@ -20,10 +20,24 @@
    - [ ] `SHOPIFY_STOREFRONT_BASE_URL` (endereço público da loja, para montar links)
 6. Troque no `.env`: `CATALOG_PROVIDER=shopify` e `ORDER_PROVIDER=shopify`.
 
-## Metacampos do rótulo (importante)
+## Metacampos
+
+### O que já existe na loja (verificado em 21/08/2026)
+
+| Namespace | Chave         | Conteúdo                      | Situação                                                       |
+| --------- | ------------- | ----------------------------- | -------------------------------------------------------------- |
+| `custom`  | `dias_de_uso` | Dias que a embalagem dura     | **Preenchido na maioria dos produtos.** Já usado pelo sistema. |
+| `custom`  | `quantidade`  | Ex.: "100 comprimidos"        | Preenchido                                                     |
+| `udesly`  | `dias-de-uso` | Versão em texto do mesmo dado | Preenchido                                                     |
+
+O sistema lê `custom.dias_de_uso` direto da loja. Quando vocês corrigem o cadastro,
+o agente passa a responder certo sem ninguém mexer no código.
+
+### O que ainda falta cadastrar
 
 O agente só fala de composição, modo de uso e advertências com **texto oficial**.
-A forma recomendada é cadastrar metacampos nos produtos:
+Hoje esse conteúdo está solto dentro da descrição do produto, em texto corrido —
+não dá para extrair com segurança. A recomendação é criar metacampos:
 
 | Namespace | Chave                  | Conteúdo              |
 | --------- | ---------------------- | --------------------- |

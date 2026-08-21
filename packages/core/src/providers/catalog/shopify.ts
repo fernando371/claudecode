@@ -9,6 +9,13 @@ import type { CatalogProvider } from './tipos.js';
  * Fica desabilitado enquanto nao houver credenciais no .env.
  */
 
+/** Le um numero inteiro vindo de metafield, sem chutar quando estiver vazio. */
+function lerInteiro(valor: string | undefined): number | null {
+  if (!valor) return null;
+  const numero = Number.parseInt(valor, 10);
+  return Number.isFinite(numero) && numero > 0 ? numero : null;
+}
+
 const CONSULTA_PRODUTOS = `
 query BuscarProdutos($termo: String!, $limite: Int!) {
   products(first: $limite, query: $termo) {
@@ -37,7 +44,8 @@ query BuscarProdutos($termo: String!, $limite: Int!) {
           {namespace: "fdc", key: "composicao"},
           {namespace: "fdc", key: "modo_de_uso"},
           {namespace: "fdc", key: "advertencias"},
-          {namespace: "fdc", key: "porcao_por_embalagem"}
+          {namespace: "fdc", key: "porcao_por_embalagem"},
+          {namespace: "custom", key: "dias_de_uso"}
         ]) { key value }
       }
     }
@@ -134,6 +142,7 @@ export class ShopifyCatalogProvider implements CatalogProvider {
         disponivel: e.node.availableForSale,
         estoque: e.node.inventoryQuantity,
       })),
+      duracaoDiasEstimada: lerInteiro(meta.get('dias_de_uso')),
       rotulo: {
         composicao: meta.get('composicao') ?? null,
         modoDeUso: meta.get('modo_de_uso') ?? null,

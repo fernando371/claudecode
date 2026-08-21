@@ -31,7 +31,8 @@
       "advertencias": "[EXEMPLO] Este produto não é medicamento. Não exceder a recomendação diária de consumo. Manter fora do alcance de crianças.",
       "porcaoPorEmbalagem": "[EXEMPLO] 60 porções"
     },
-    "ficticio": true
+    "ficticio": true,
+    "duracaoDiasEstimada": 60
   },
   {
     "id": "demo-vit-d3",
@@ -57,7 +58,8 @@
       "advertencias": "[EXEMPLO] Este produto não é medicamento. Não exceder a recomendação diária de consumo.",
       "porcaoPorEmbalagem": "[EXEMPLO] 60 porções"
     },
-    "ficticio": true
+    "ficticio": true,
+    "duracaoDiasEstimada": 60
   },
   {
     "id": "demo-magnesio",
@@ -83,7 +85,8 @@
       "advertencias": "[EXEMPLO] Este produto não é medicamento.",
       "porcaoPorEmbalagem": "[EXEMPLO] 120 porções"
     },
-    "ficticio": true
+    "ficticio": true,
+    "duracaoDiasEstimada": 60
   },
   {
     "id": "demo-whey",
@@ -117,7 +120,8 @@
       "advertencias": "[EXEMPLO] Contém derivados de leite. Este produto não é medicamento.",
       "porcaoPorEmbalagem": "[EXEMPLO] 30 porções"
     },
-    "ficticio": true
+    "ficticio": true,
+    "duracaoDiasEstimada": 30
   },
   {
     "id": "demo-creatina",
@@ -143,6 +147,7 @@
       "advertencias": "[EXEMPLO] Este produto não é medicamento.",
       "porcaoPorEmbalagem": "[EXEMPLO] 100 porções"
     },
-    "ficticio": true
+    "ficticio": true,
+    "duracaoDiasEstimada": 100
   }
 ]

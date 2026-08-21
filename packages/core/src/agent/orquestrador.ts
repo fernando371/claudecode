@@ -500,6 +500,7 @@ async function detalharSkus(
     quantidade: number;
     precoCentavos: number;
     disponivel: boolean;
+    duracaoDiasEstimada: number | null;
   }> = [];
   let falhou = false;
 
@@ -517,6 +518,7 @@ async function detalharSkus(
       quantidade: item.quantidade,
       precoCentavos: variante?.precoCentavos ?? 0,
       disponivel: variante?.disponivel ?? false,
+      duracaoDiasEstimada: produto.duracaoDiasEstimada,
     });
   }
   return { produtos, falhou };
@@ -751,21 +753,28 @@ async function rotaRecompra(
     detalhe: 'identidade verificada pelo número do WhatsApp; devolvido apenas produtos e data',
   });
 
-  const { previsoes, fonte } = preverRecompra(pedido.itens, pedido.criadoEm);
-  if (!fonte.utilizavel) {
-    acumulador.regras.push('recompra:sem_fonte_aprovada_de_duracao');
-  } else {
+  // Consultamos o catálogo ANTES de prever: a duração oficial vem de lá, e é
+  // mais confiável que a tabela do documento, que é só um espelho.
+  const { produtos: todosOsProdutos } = await detalharSkus(
+    ctx,
+    pedido.itens.map((i) => ({ sku: i.sku, quantidade: i.quantidade })),
+  );
+
+  const { previsoes, fonte } = preverRecompra(todosOsProdutos, pedido.criadoEm);
+  if (previsoes.some((p) => p.origemDaDuracao === 'catalogo')) {
+    acumulador.fontes.push({ tipo: 'catalogo', referencia: 'duração oficial do produto' });
+  } else if (fonte.utilizavel && previsoes.length > 0) {
     acumulador.fontes.push({ tipo: 'conhecimento', referencia: fonte.referencia });
+  }
+  if (previsoes.length === 0) {
+    acumulador.regras.push('recompra:sem_duracao_cadastrada');
   }
 
   const paraRepor = previsoes.filter((p) => p.naHoraDeRepor).map((p) => p.sku);
-  const itensAlvo =
-    paraRepor.length > 0 ? pedido.itens.filter((i) => paraRepor.includes(i.sku)) : pedido.itens;
-
-  const { produtos } = await detalharSkus(
-    ctx,
-    itensAlvo.map((i) => ({ sku: i.sku, quantidade: i.quantidade })),
-  );
+  const produtos =
+    paraRepor.length > 0
+      ? todosOsProdutos.filter((p) => paraRepor.includes(p.sku))
+      : todosOsProdutos;
   const disponiveis = produtos.filter((p) => p.disponivel);
 
   const abertura =

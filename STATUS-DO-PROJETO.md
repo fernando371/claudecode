@@ -19,8 +19,9 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 - Gera link de produto e de carrinho, inclusive **misturando FDC Vitaminas e FDC Nutrition**.
 - **Carrinho abandonado:** mostra o carrinho do cliente e o link para retomar, quando
   ele pergunta. Identidade vem do número do WhatsApp; devolve só nome dos produtos.
-- **Recompra:** compara a data da última compra com a duração estimada do rótulo e
-  oferece reposição do que já deve estar acabando.
+- **Recompra:** compara a data da última compra com a **duração oficial cadastrada
+  no próprio produto da loja** (`custom.dias_de_uso`) e oferece reposição do que já
+  deve estar acabando. Sem esse dado, não afirma que acabou.
 - **Cross-sell:** sugere combinações vindas da **análise real de co-compra da loja**
   (250 pedidos pagos), **aprovadas por Fernando em 21/08/2026**, por família de
   produto, nunca inventadas, nunca personalizadas por informação de saúde e nunca
@@ -92,7 +93,7 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 
 ### Qualidade
 
-- **163 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
+- **168 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
 - **13 testes de navegador** (`npm run test:e2e`) percorrendo o painel de verdade,
   incluindo o atendimento humano de ponta a ponta.
 - Verificação de tipos, lint, formatação e verificação de segredos, todos limpos.

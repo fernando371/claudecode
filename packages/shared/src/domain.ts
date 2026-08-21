@@ -119,6 +119,12 @@ export interface Produto {
     advertencias: string | null;
     porcaoPorEmbalagem: string | null;
   };
+  /**
+   * Dias que a embalagem dura, conforme o campo oficial da loja
+   * (metafield custom.dias_de_uso no Shopify). null quando nao cadastrado —
+   * nesse caso o agente NAO afirma que o produto esta acabando.
+   */
+  duracaoDiasEstimada: number | null;
   /** Marcacao obrigatoria de dado de demonstracao. */
   ficticio: boolean;
 }

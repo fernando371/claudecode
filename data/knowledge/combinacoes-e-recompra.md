@@ -1,6 +1,6 @@
 ---
 titulo: 'Combinações de produtos e prazos de recompra'
-fonte: 'Análise de co-compra dos pedidos reais da loja fdc.com.br (250 pedidos pagos dos últimos 12 meses, levantados em 21/08/2026) + títulos oficiais dos produtos'
+fonte: 'Análise de co-compra de 250 pedidos pagos reais da loja fdc.com.br (últimos 12 meses) + campo oficial custom.dias_de_uso cadastrado em cada produto no Shopify. Levantado em 21/08/2026.'
 atualizado_em: '2026-08-21'
 aprovado_por: 'Fernando (Biowell América) — aprovado em 21/08/2026'
 status: 'aprovado'
@@ -125,36 +125,93 @@ e **não** aparece para o cliente.
 
 ## Duração
 
-Quantos dias cada embalagem dura. Só entram aqui os produtos em que **a própria
-FDC informa a duração no título**. Para os demais, o agente ainda mostra a última
-compra, mas **não afirma** que o produto está acabando — porque não sabe.
+Quantos dias cada embalagem dura. **Todos os valores abaixo vêm do campo oficial
+`custom.dias_de_uso`, cadastrado pela própria FDC em cada produto no Shopify.**
+Nenhum foi calculado ou estimado por mim.
 
-| SKU               | Dias |
-| ----------------- | ---- |
-| 200616            | 60   |
-| 200621            | 30   |
-| 200630            | 100  |
-| 200647            | 90   |
-| DEMO-VITC-60      | 60   |
-| DEMO-VITC-120     | 120  |
-| DEMO-VITD-60      | 60   |
-| DEMO-MAG-120      | 60   |
-| DEMO-WHEY-900-BAU | 30   |
-| DEMO-WHEY-900-CHO | 30   |
-| DEMO-CREA-300     | 100  |
+Em produção, o sistema lê esse campo direto da loja — esta tabela serve como
+espelho e como fonte para o simulador. Produto sem o campo preenchido não entra
+aqui, e para ele o agente não afirma que está acabando.
 
-## Situação
+| SKU                            | Dias |
+| ------------------------------ | ---- |
+| 200101                         | 50   |
+| 200310                         | 100  |
+| 200392                         | 100  |
+| 200481                         | 100  |
+| 200557                         | 30   |
+| 200564                         | 70   |
+| 200566                         | 140  |
+| 200571                         | 100  |
+| 200585                         | 180  |
+| 200596                         | 90   |
+| 200614                         | 180  |
+| 200615                         | 100  |
+| 200616                         | 60   |
+| 200618                         | 60   |
+| 200619                         | 30   |
+| 200621                         | 30   |
+| 200622                         | 30   |
+| 200630                         | 100  |
+| 200635                         | 100  |
+| 200638                         | 60   |
+| 200647                         | 90   |
+| 200648                         | 30   |
+| 200673                         | 160  |
+| 200674                         | 60   |
+| 200675                         | 60   |
+| 200681                         | 60   |
+| 200682                         | 60   |
+| 200683                         | 15   |
+| 200684                         | 50   |
+| 200687                         | 60   |
+| KIT-200101-2UN                 | 100  |
+| KIT-200481-2UN                 | 200  |
+| KIT-200585-3UN                 | 180  |
+| KIT-200585-5UN                 | 300  |
+| KIT-200615-2UN                 | 200  |
+| KIT-200622-2UN                 | 60   |
+| KIT-200622-3UN                 | 90   |
+| KIT-200638-2UN                 | 120  |
+| KIT-200647-2UN                 | 180  |
+| KIT-200648-2UN                 | 60   |
+| KIT-ALL26-3UN                  | 300  |
+| KIT-ALLNUTRI-140-60            | 200  |
+| KIT-ALLNUTRI-420               | 420  |
+| KIT-DEFESA-TRIPLA-C30-D3-ZINCO | 30   |
+| KIT-OMEGA-COQ10-2UN            | 30   |
+| DEMO-VITC-60                   | 60   |
+| DEMO-VITC-120                  | 120  |
+| DEMO-VITD-60                   | 60   |
+| DEMO-MAG-120                   | 60   |
+| DEMO-WHEY-900-BAU              | 30   |
+| DEMO-WHEY-900-CHO              | 30   |
+| DEMO-CREA-300                  | 100  |
 
-**Aprovado por Fernando em 21/08/2026.** O agente já pode sugerir estas
-combinações, inclusive em produção.
+## Inconsistências encontradas no cadastro (para a FDC revisar)
 
-As linhas marcadas com `[EXEMPLO]` e SKUs `DEMO-*` existem só para o simulador
-funcionar. Elas não têm efeito em produção, porque esses SKUs não existem no
-catálogo real.
+Ao cruzar os kits com os frascos individuais, três cadastros parecem estar com o
+`dias_de_uso` do frasco unitário em vez do kit inteiro. Isso afeta o site, não só
+este sistema. **Não alterei nada** — só estou reportando.
+
+| Produto                                      | Cadastrado | Esperado pela conta | Observação            |
+| -------------------------------------------- | ---------- | ------------------- | --------------------- |
+| Ômega-3 360 Cápsulas · Kit 3 Frascos         | 180 dias   | 540 dias            | 3 frascos de 180 dias |
+| Ômega-3 360 Cápsulas · Kit Família 5 Frascos | 300 dias   | 900 dias            | 5 frascos de 180 dias |
+| Ômega + CoQ10 · 2 unidades                   | 30 dias    | 60 dias             | 2 unidades de 30 dias |
+
+Os demais kits estão coerentes (Kit 2 Frascos de Vitamina C = 200 dias, Kit 3
+Frascos do All 26 = 300 dias, e assim por diante).
+
+Enquanto não forem corrigidos, o agente vai sugerir reposição desses três kits
+**antes da hora**. Prefiro deixar assim, seguindo o dado oficial, a corrigir por
+conta própria.
 
 ## O que ainda falta
 
-- **Duração dos demais produtos.** Precisa da porção diária do rótulo oficial de
-  cada SKU. Sem isso, a recompra funciona, mas sem a frase "já deve estar acabando".
+- **Correção dos três kits** listados acima no cadastro do Shopify.
+- **Produtos ainda sem `dias_de_uso` cadastrado** (Creatina em pó, Super EPA,
+  Vitamina E + Selênio, Defesa Tripla unitário e os kits "Leve 3 e pague 2").
+  Para eles o agente não afirma que o produto está acabando.
 - **Revisão periódica.** A análise de co-compra deve ser refeita a cada seis meses;
   o padrão de compra muda.

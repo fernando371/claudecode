@@ -3,7 +3,7 @@
 ## Como rodar
 
 ```bash
-npm test            # 163 testes de dentro do sistema (~2 segundos)
+npm test            # 168 testes de dentro do sistema (~2 segundos)
 npm run test:e2e    # 13 testes de navegador, abrindo o painel de verdade (~20 segundos)
 npm run check:all   # formatação + lint + tipos + testes + segredos
 ```
@@ -57,7 +57,7 @@ Todos implementados em `tests/cenarios.test.ts` e **passando**:
 - **LGPD (18):** prazos de guarda acordados, expurgo pela política de retenção (respeita os prazos, apaga o
   relato de saúde antes do resto, mantém o registro do próprio expurgo, pode rodar
   duas vezes seguidas), exclusão dos dados de um cliente e interrupção de comunicações.
-- **Vendas (36):** combinações reais da loja (trabalham por família, não sugerem
+- **Vendas (40):** duração vinda do catálogo com queda para a tabela, combinações reais da loja (trabalham por família, não sugerem
   a mesma família de volta, o motivo mostrado ao cliente não faz promessa de saúde,
   duração só de produto em que a FDC informa os dias), proteção de marketplace, fonte das combinações, previsão de recompra, carrinho abandonado
   (mostra só do próprio número, registra a oportunidade, não vaza para número

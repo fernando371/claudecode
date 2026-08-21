@@ -221,16 +221,65 @@ describe('Combinações reais da loja (dados de venda)', () => {
     const doc = carregarDocumentos().find((d) => d.id === 'combinacoes-e-recompra');
     expect(doc?.status).toBe('aprovado');
     expect(doc?.aprovadoPor).toContain('Fernando');
-    expect(doc?.fonte).toContain('pedidos reais');
+    expect(doc?.fonte).toContain('pedidos pagos reais');
   });
 
-  it('só cadastra duração de produto em que a FDC informa os dias', () => {
+  it('usa a duração oficial cadastrada pela FDC em cada produto', () => {
     const fonte = carregarFonteCombinacoes();
-    // A FDC informa no próprio título: Complexo B = 100 dias, Zinco = 90 dias.
+    // Valores do campo custom.dias_de_uso da própria loja.
     expect(fonte.duracaoPorSku.get('200630')).toBe(100);
     expect(fonte.duracaoPorSku.get('200647')).toBe(90);
-    // Vitamina C não informa a duração: não pode ser chutada.
-    expect(fonte.duracaoPorSku.has('200481')).toBe(false);
+    expect(fonte.duracaoPorSku.get('200481')).toBe(100);
+    expect(fonte.duracaoPorSku.get('200585')).toBe(180);
+  });
+
+  it('não inventa duração para produto sem o campo cadastrado', () => {
+    const fonte = carregarFonteCombinacoes();
+    // Estes não têm custom.dias_de_uso preenchido na loja.
+    for (const sku of ['200613', '200685', '200688', '200617']) {
+      expect(fonte.duracaoPorSku.has(sku)).toBe(false);
+    }
+  });
+});
+
+describe('Duração vem do catálogo, não da tabela', () => {
+  const compradoHa = (dias: number) => new Date(Date.now() - dias * 86400000).toISOString();
+
+  it('prefere a duração cadastrada no produto', () => {
+    const { previsoes } = preverRecompra(
+      [{ sku: 'DEMO-VITC-60', duracaoDiasEstimada: 10 }],
+      compradoHa(20),
+    );
+    // O documento diz 60 dias; o catálogo diz 10. Vale o catálogo.
+    expect(previsoes[0]?.duracaoDias).toBe(10);
+    expect(previsoes[0]?.origemDaDuracao).toBe('catalogo');
+    expect(previsoes[0]?.naHoraDeRepor).toBe(true);
+  });
+
+  it('cai para a tabela quando o produto não tem o campo', () => {
+    const { previsoes } = preverRecompra(
+      [{ sku: 'DEMO-VITC-60', duracaoDiasEstimada: null }],
+      compradoHa(20),
+    );
+    expect(previsoes[0]?.duracaoDias).toBe(60);
+    expect(previsoes[0]?.origemDaDuracao).toBe('documento');
+    expect(previsoes[0]?.naHoraDeRepor).toBe(false);
+  });
+
+  it('ainda funciona se o documento estiver bloqueado, usando só o catálogo', () => {
+    const { previsoes } = preverRecompra(
+      [{ sku: 'QUALQUER-SKU', duracaoDiasEstimada: 30 }],
+      compradoHa(40),
+      { pasta: 'tests/fixtures/conhecimento' },
+    );
+    expect(previsoes).toHaveLength(1);
+    expect(previsoes[0]?.naHoraDeRepor).toBe(true);
+  });
+
+  it('avisa que o produto está acabando usando a duração real da loja', async () => {
+    const r = await conversar('quero repor meu produto', { remetente: CLIENTE_ANA });
+    expect(r.intencao).toBe('recompra');
+    expect(r.fontes.some((f) => f.referencia.includes('duração oficial'))).toBe(true);
   });
 });
 

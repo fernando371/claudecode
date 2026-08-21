@@ -184,20 +184,27 @@ export function sugerirCombinacoes(
 export interface PrevisaoRecompra {
   sku: string;
   duracaoDias: number;
+  /** De onde veio a duração: do catálogo da loja ou da tabela do documento. */
+  origemDaDuracao: 'catalogo' | 'documento';
   diasDesdeACompra: number;
   diasRestantes: number;
   /** true quando o produto provavelmente já acabou ou está para acabar. */
   naHoraDeRepor: boolean;
 }
 
-/** Estima se o produto comprado já está acabando, usando a duração do rótulo. */
+/**
+ * Estima se o produto comprado já está acabando.
+ *
+ * A duração preferida é a do CATÁLOGO (campo oficial da loja), porque está
+ * sempre atualizada. A tabela do documento serve de espelho e para o simulador.
+ * Sem nenhuma das duas, o produto é ignorado — nunca chutamos.
+ */
 export function preverRecompra(
-  itens: Array<{ sku: string }>,
+  itens: Array<{ sku: string; duracaoDiasEstimada?: number | null }>,
   compradoEm: string,
   opcoes: { pasta?: string; agoraMs?: number; margemDias?: number } = {},
 ): { fonte: FonteCombinacoes; previsoes: PrevisaoRecompra[] } {
   const fonte = carregarFonteCombinacoes(opcoes.pasta);
-  if (!fonte.utilizavel) return { fonte, previsoes: [] };
 
   const agoraMs = opcoes.agoraMs ?? Date.now();
   const margem = opcoes.margemDias ?? 7;
@@ -208,12 +215,15 @@ export function preverRecompra(
 
   const previsoes = itens
     .map((item) => {
-      const duracaoDias = fonte.duracaoPorSku.get(item.sku.toUpperCase());
+      const doCatalogo = item.duracaoDiasEstimada ?? null;
+      const doDocumento = fonte.duracaoPorSku.get(item.sku.toUpperCase()) ?? null;
+      const duracaoDias = doCatalogo ?? doDocumento;
       if (!duracaoDias) return null;
       const diasRestantes = duracaoDias - diasDesdeACompra;
       return {
         sku: item.sku,
         duracaoDias,
+        origemDaDuracao: (doCatalogo ? 'catalogo' : 'documento') as 'catalogo' | 'documento',
         diasDesdeACompra,
         diasRestantes,
         naHoraDeRepor: diasRestantes <= margem,
