@@ -26,22 +26,14 @@ Lista curta do que **depende de você**. Nada aqui pode ser feito por mim sozinh
 
 ---
 
-## 1b. Aprovar as combinações de produtos — PESQUISA FEITA, FALTA SÓ SEU "SIM"
+## 1b. Combinações de produtos — RESOLVIDO
 
-- **O que é:** a tabela que diz quais produtos o agente pode sugerir juntos.
-- **O que eu já fiz:** em vez de inventar, analisei **250 pedidos pagos reais** da
-  loja (últimos 12 meses) e levantei o que os seus clientes de fato compram juntos.
-  As 18 combinações mais frequentes já estão cadastradas, com os SKUs reais.
-- **Por que ainda depende de você:** o arquivo está como `rascunho`. Enquanto
-  estiver assim, o agente **não sugere nada em produção** — funciona só no
-  simulador. É a trava de governança que combinamos.
-- **Custo:** nenhum.
-- **Pode esperar?** Sim, mas é literalmente uma palavra.
-- **Nunca envie pelo chat:** nada.
-- **Próxima ação exata:** olhar a tabela em
-  `data/knowledge/combinacoes-e-recompra.md` e me dizer **"aprovo as combinações"**
-  (ou quais tirar). Eu troco o status para `aprovado` e registro seu nome como
-  responsável.
+- **Decisão de 21/08/2026:** Fernando aprovou as 18 combinações levantadas da
+  análise de co-compra de 250 pedidos pagos reais da loja.
+- **Já está valendo**, inclusive em produção. Sua aprovação ficou registrada no
+  cabeçalho do arquivo `data/knowledge/combinacoes-e-recompra.md`.
+- **Revisar em fevereiro de 2027.** O padrão de compra muda; a análise deve ser
+  refeita a cada seis meses. Eu refaço em minutos quando você pedir.
 
 ---
 

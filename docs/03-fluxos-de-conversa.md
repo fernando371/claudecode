@@ -198,7 +198,8 @@ O agente só sugere combinação que esteja na tabela aprovada do documento
 personaliza a sugestão com informação de saúde que o cliente tenha mencionado.
 
 As combinações não são inventadas: saíram de uma **análise do que os clientes da
-FDC realmente compram juntos** (250 pedidos pagos dos últimos 12 meses). O texto
+FDC realmente compram juntos** (250 pedidos pagos dos últimos 12 meses), e foram
+**aprovadas por Fernando em 21/08/2026**. O texto
 mostrado ao cliente fala só de comportamento de compra — "é a dupla mais levada
 junto" — nunca de efeito ou benefício.
 

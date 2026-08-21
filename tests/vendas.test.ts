@@ -3,7 +3,9 @@ import { CLIENTE_ANA, CLIENTE_BRUNO, conversar, prepararAmbiente } from './apoio
 import {
   adaptadores,
   auditoria,
+  carregarDocumentos,
   carregarFonteCombinacoes,
+  limparCacheConfig,
   metricas,
   pedidoDeMarketplace,
   preverRecompra,
@@ -200,6 +202,26 @@ describe('Combinações reais da loja (dados de venda)', () => {
         expect(motivo).not.toContain(palavra);
       }
     }
+  });
+
+  it('está aprovado e vale também em produção', () => {
+    process.env.APP_ENV = 'producao';
+    limparCacheConfig();
+    try {
+      const fonte = carregarFonteCombinacoes();
+      expect(fonte.utilizavel).toBe(true);
+      expect(fonte.combinacoes.length).toBeGreaterThan(10);
+    } finally {
+      process.env.APP_ENV = 'dev';
+      limparCacheConfig();
+    }
+  });
+
+  it('registra quem aprovou, para a trilha de governança', () => {
+    const doc = carregarDocumentos().find((d) => d.id === 'combinacoes-e-recompra');
+    expect(doc?.status).toBe('aprovado');
+    expect(doc?.aprovadoPor).toContain('Fernando');
+    expect(doc?.fonte).toContain('pedidos reais');
   });
 
   it('só cadastra duração de produto em que a FDC informa os dias', () => {

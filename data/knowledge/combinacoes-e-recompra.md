@@ -2,8 +2,8 @@
 titulo: 'Combinações de produtos e prazos de recompra'
 fonte: 'Análise de co-compra dos pedidos reais da loja fdc.com.br (250 pedidos pagos dos últimos 12 meses, levantados em 21/08/2026) + títulos oficiais dos produtos'
 atualizado_em: '2026-08-21'
-aprovado_por: 'PENDENTE - Fernando'
-status: 'rascunho'
+aprovado_por: 'Fernando (Biowell América) — aprovado em 21/08/2026'
+status: 'aprovado'
 canais: ['whatsapp', 'simulador']
 proxima_revisao: '2027-02-21'
 ---
@@ -143,10 +143,17 @@ compra, mas **não afirma** que o produto está acabando — porque não sabe.
 | DEMO-WHEY-900-CHO | 30   |
 | DEMO-CREA-300     | 100  |
 
+## Situação
+
+**Aprovado por Fernando em 21/08/2026.** O agente já pode sugerir estas
+combinações, inclusive em produção.
+
+As linhas marcadas com `[EXEMPLO]` e SKUs `DEMO-*` existem só para o simulador
+funcionar. Elas não têm efeito em produção, porque esses SKUs não existem no
+catálogo real.
+
 ## O que ainda falta
 
-- **Sua aprovação.** Enquanto o status deste arquivo for `rascunho`, o agente não
-  sugere combinação em produção. Ele funciona normalmente no simulador.
 - **Duração dos demais produtos.** Precisa da porção diária do rótulo oficial de
   cada SKU. Sem isso, a recompra funciona, mas sem a frase "já deve estar acabando".
 - **Revisão periódica.** A análise de co-compra deve ser refeita a cada seis meses;

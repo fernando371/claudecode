@@ -22,8 +22,9 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 - **Recompra:** compara a data da última compra com a duração estimada do rótulo e
   oferece reposição do que já deve estar acabando.
 - **Cross-sell:** sugere combinações vindas da **análise real de co-compra da loja**
-  (250 pedidos pagos), por família de produto, nunca inventadas, nunca
-  personalizadas por informação de saúde e nunca em cima de pergunta objetiva.
+  (250 pedidos pagos), **aprovadas por Fernando em 21/08/2026**, por família de
+  produto, nunca inventadas, nunca personalizadas por informação de saúde e nunca
+  em cima de pergunta objetiva.
 - **Proteção de marketplace:** pedido vindo de Shopee ou Mercado Livre não vira
   oferta de recompra no site.
 - Registra motivo de contato, transfere para atendente e alimenta os indicadores.
@@ -91,7 +92,7 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 
 ### Qualidade
 
-- **161 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
+- **163 testes automatizados** passando, incluindo os 25 cenários obrigatórios.
 - **13 testes de navegador** (`npm run test:e2e`) percorrendo o painel de verdade,
   incluindo o atendimento humano de ponta a ponta.
 - Verificação de tipos, lint, formatação e verificação de segredos, todos limpos.
@@ -117,7 +118,7 @@ Atualizado em **20/08/2026**. Fase: **protótipo com dados fictícios**.
 
 ### Depende de você (ver `PENDENCIAS-FERNANDO.md`)
 
-1. Conteúdo oficial da FDC aprovado (rótulos, FAQ, frete, trocas, combinações).
+1. Conteúdo oficial da FDC aprovado (rótulos, FAQ, frete, trocas). As combinações já foram aprovadas.
 2. Responsável técnico que aprova a informação de saúde.
 3. Decisão sobre acesso à Meta, ao Shopify, ao SAP e às transportadoras.
 4. Autorização para salvar o projeto no Git.
